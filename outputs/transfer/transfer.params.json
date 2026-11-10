@@ -1,0 +1,59 @@
+{
+  "params": {
+    "scenes": [
+      "configs/data.yaml",
+      "configs/data_town.yaml"
+    ],
+    "heads": [
+      "failure",
+      "layered",
+      "vehicle"
+    ],
+    "step3": {
+      "seed": 0,
+      "min_pairs": 3,
+      "motion": {
+        "min_obs": 6,
+        "pool_radii": [
+          1,
+          2
+        ]
+      },
+      "physics": {
+        "low_texture_std": 4.0,
+        "periodic_frac_full": 0.3,
+        "t_full": 4.0,
+        "good_baseline_m": 30.0,
+        "good_n_pairs": 10,
+        "layer_cost_jump": 0.2
+      },
+      "labels": {
+        "failure_min_abs_error": 0.5,
+        "healthy_max_abs_error": 0.15,
+        "layered_min_spread": 2.0,
+        "flat_max_spread": 0.3,
+        "vehicle_min_points": 20
+      },
+      "cv": {
+        "block_m": 25.0,
+        "folds": 5,
+        "l2": 10.0
+      }
+    }
+  },
+  "created": "2026-11-09T17:58:17",
+  "python": "3.12.3",
+  "platform": "Linux-7.0.0-42-generic-x86_64-with-glibc2.39",
+  "argv": [
+    "/home/edgar/Desktop/CC/src/aerodiag/cli/transfer.py",
+    "--scenes",
+    "configs/data.yaml",
+    "configs/data_town.yaml"
+  ],
+  "versions": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "opencv": "5.0.0",
+    "open3d": "0.20.0"
+  }
+}

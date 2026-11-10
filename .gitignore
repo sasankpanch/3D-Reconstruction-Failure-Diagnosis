@@ -1,0 +1,23 @@
+# environments / caches
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+# dataset (UAVScenes; download separately, see README)
+data/
+# heavy intermediates (regenerate with the pipeline)
+outputs/**/cache/
+*.parquet
+*.npz
+*.npy
+*.ply
+outputs/**/*.log
+outputs/run_all.log
+# paper drafts (double-blind review)
+*.tex
+*.aux
+*.bbl
+*.blg
+*.out
+*.synctex.gz

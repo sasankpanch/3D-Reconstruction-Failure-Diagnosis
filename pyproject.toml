@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aerodiag"
+version = "0.1.0"
+description = "Pre-reconstruction failure diagnosis for aerial mapping: data/label pipeline, pose sources, noise floor"
+requires-python = ">=3.10"
+dependencies = ["numpy", "scipy", "opencv-python-headless", "open3d", "pandas", "pyarrow",
+                "matplotlib", "pyproj", "pyyaml", "rosbags"]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[project.scripts]
+aerodiag-phase0 = "aerodiag.cli.phase0:main"
+aerodiag-track-a = "aerodiag.cli.track_a:main"
+aerodiag-track-b = "aerodiag.cli.track_b:main"
+aerodiag-selfcal = "aerodiag.cli.selfcal:main"
+aerodiag-step2 = "aerodiag.cli.step2:main"
+aerodiag-step3 = "aerodiag.cli.step3:main"
+aerodiag-summary = "aerodiag.cli.summary:main"
+aerodiag-transfer = "aerodiag.cli.transfer:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

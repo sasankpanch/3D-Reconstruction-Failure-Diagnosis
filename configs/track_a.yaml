@@ -1,0 +1,29 @@
+# Track A - ground-truth error labels. Units: metres unless stated.
+seed: 0
+map:
+  frames: reference           # only Terra-registered keyframes (Q1)
+  segments: [hover, climb, cruise_line, diagonal, descent]   # turns excluded: unvalidated poses, worst offsets (diag/group_bias.csv)
+  min_frame_median_range: 45.0   # m; excludes the 33 m-AGL hover (consistent -0.40 m offset)
+  remove_dynamic: true
+  point_stride: 1
+  min_range: 5.0
+  time_offset_s: 0.0         # Q7: global offset NOT identifiable (search flat within +-50 ms; see LABELS_REPORT) -> 0
+  time_offset_search_ms: [-150, 150, 10]
+  time_offset_classes: [1, 9, 11, 16, 10, 3, 18, 2]   # man-made, sharp-edged classes only (vegetation views disagree)
+sanity:
+  n_consecutive: 50
+grid:
+  cell_size: 1.0
+  min_points: 10              # cells below -> no_gt
+  good_max_group_iqr: 0.20    # gt_good: >= 2 viewing groups, IQR of their cell medians <= this (m)
+  min_group_points: 5         # a viewing group (flight line / segment run) contributes to the balanced Z if it has >= this many points
+stable:
+  min_points: 50
+  max_spread: 0.10            # robust spread (1.4826*MAD) of LiDAR Z in cell
+  max_neighbour_slope: 0.15   # |dz| per m to 4-neighbours
+  max_group_range: 0.15       # range of per-viewing-group medians (GT self-consistency)
+align:
+  method: icp_point_to_plane
+  max_corr_dist: [1.0, 0.5, 0.25]
+  tukey_k: 0.15
+  voxel: 0.25

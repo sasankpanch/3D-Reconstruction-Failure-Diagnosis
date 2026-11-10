@@ -1,0 +1,18 @@
+# Step 3 - cause diagnosis. Units: px, m, s, deg.
+seed: 0
+min_pairs: 3
+motion: {min_obs: 6, pool_radii: [1, 2]}
+physics:                     # documented, untuned thresholds for label-free cause scores
+  low_texture_std: 4.0       # grey levels
+  periodic_frac_full: 0.3    # fraction of pairs with evenly spaced minima -> score 1
+  t_full: 4.0                # t-statistic -> score 1 (moving / reflective trends)
+  good_baseline_m: 30.0
+  good_n_pairs: 10
+  layer_cost_jump: 0.2       # increase of 1-NCC from short to long baselines -> score 1
+labels:                      # comparison-side proxy labels (training targets only)
+  failure_min_abs_error: 0.5
+  healthy_max_abs_error: 0.15
+  layered_min_spread: 2.0    # LiDAR p90 - p10 in cell (m)
+  flat_max_spread: 0.3
+  vehicle_min_points: 20
+cv: {block_m: 25.0, folds: 5, l2: 10.0}

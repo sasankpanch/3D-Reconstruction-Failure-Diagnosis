@@ -1,0 +1,51 @@
+# Track B - onboard pose + noise floor (go/no-go gate). Units: px, m, deg, s.
+seed: 0
+features:
+  type: rootsift
+  max_features: 8000
+  texture_window: 21          # px, patch std (grey levels) around each keypoint = texture measure
+  workers: 12
+matching:
+  ratio: 0.8
+  mutual: true
+  # pose-INDEPENDENT outlier filter: displacement must agree with its k image-neighbours' median displacement
+  local_k: 12
+  local_tol_px: 12.0
+  local_tol_mad: 4.0          # tol = max(local_tol_px, local_tol_mad * neighbour MAD)
+  max_matches_per_pair: 3000
+  min_matches: 40
+pairs:
+  within_gaps: [1, 5, 10, 20, 40, 80]   # frames (gap 1 only for sources defined at every frame)
+  within_segments: [cruise_line, diagonal]
+  cross_line_max_center_dist: 85.0      # m, parallel-line pairs (footprint ~133 x 111 m)
+  cross_line_stride: 2                  # every 2nd keyframe as base
+  crossing_max_center_dist: 60.0        # diagonal vs parallel lines
+  extra_segments: {climb: [5, 10], turn: [5, 10]}   # reported separately
+sources:
+  terra: {}                              # reference keyframes only
+  terra_json: {}                         # JSON poses incl. interpolated (diagnostic; gap-1 only meaningful)
+  rtk_att0: {attitude_noise_deg: 0.0}
+  rtk: {attitude_noise_deg: 0.1}         # PRIMARY onboard prior (attitude = keyframe slerp + noise)
+  noisy_rtk: {preset: rtk}
+  noisy_gnss: {preset: gnss}
+sweep:                                   # controlled position-noise sweep on reference keyframes (all refined)
+  pos_sigma_m: [0.02, 0.05, 0.1, 0.2, 0.5, 1.0]   # per-frame white, horizontal and vertical
+  att_sigma_deg: 0.1
+refine:
+  sources: [terra, rtk, noisy_rtk, noisy_gnss, sweep]   # each gets a '+ref' variant ('sweep' = all sweep sources)
+  max_matches_fit: 1500
+  loss: soft_l1
+  f_scale_px: 1.0
+  min_matches: 40
+  water_classes: [4, 5]
+  water_max_fraction: 0.5
+  folds: 2                               # cross-validated: fit on one half, evaluate on the other
+healthy:
+  class_based: [10, 3, 18, 1]            # airstrip, paved road, car park, roof
+  error_max_abs: 0.15
+  unhealthy_error_min_abs: 0.5
+  min_texture: 6.0                       # median patch std of the cell's matches (grey levels)
+  vegetation: [13]                       # reported separately (Q6)
+  vehicle_classes: [20, 24]
+  vehicle_mask_dilate_px: 9
+position_bins_px: [0, 600, 1000, 1700]   # radius from principal point: centre / mid / edge

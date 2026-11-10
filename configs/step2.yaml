@@ -1,0 +1,36 @@
+# Step 2 - micro-reconstruction and signals. Onboard inputs only (images, timestamps, RTK, self-calibrated intrinsics).
+# Units: m, px, deg. Frame: local ENU.
+seed: 0
+features: {type: rootsift, max_features: 8000, texture_window: 21, workers: 12}
+matching: {ratio: 0.8, mutual: true, local_k: 12, local_tol_px: 12.0, local_tol_mad: 4.0, max_matches_per_pair: 3000, min_matches: 40}
+pairs:
+  types: [within_line, cross_line, crossing]
+  within_base_stride: 2           # every 2nd base keyframe for within-line pairs (time budget)
+  within_gaps: [1, 5, 10, 20, 40, 80]
+  within_segments: [cruise_line, diagonal]
+  cross_line_max_center_dist: 85.0
+  cross_line_stride: 2
+  crossing_max_center_dist: 60.0
+  extra_segments: {}
+bundle: {max_tracks: 80000, rounds: 6}
+terrain: {min_gap_frames: 20, coarse_cell_m: 5.0, min_points: 3, smooth_cells: 0.7, max_extrapolation_m: 10.0}
+grid: {cell_m: 1.0}
+sweep:
+  patch_half_m: 0.6               # ground patch half-size (1.2 m patch ~ 22 px at cruise)
+  patch_samples: 7                # 7 x 7 samples
+  n_hyp_half: 48                  # 97 height hypotheses
+  step_px: 1.0                    # image-2 motion per hypothesis step (px), unless capped by range
+  range_m: 20.0                   # max +- search around the coarse terrain
+  min_ref_std: 2.0                # grey levels; textureless reference patches -> NaN signals
+  minima_delta: 0.1
+  minima_min_sep: 2
+  periodic_cv: 0.25
+  across_range_px: 6
+  sigma_match_px: 0.5
+  below_k_sigma: 3.0
+  below_tol_m: 0.5
+  glint_sigma_deg: 5.0
+  margin_px: 60
+  chunk_cells: 500
+  cell_stride: 1
+  workers: 12

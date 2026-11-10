@@ -1,0 +1,493 @@
+{
+  "ground_truth": {
+    "cells_gt": 94581,
+    "cells_gt_good": 16811.0,
+    "global_offset_terra_minus_lidar_m": -0.8839149475097656,
+    "icp_residual_stable_m": 0.045961781135432034,
+    "sanity_between_frame_spread_m": 0.028578101348876953,
+    "gt_uncertainty_iqr_median_m": 0.37038087844848633
+  },
+  "noise_floor_p90_px": [
+    {
+      "pairs": "climb:10",
+      "noisy_gnss+ref": 4.37,
+      "rtk": 6.23,
+      "rtk+ref": 0.42,
+      "terra": 0.53,
+      "terra+ref": 0.42
+    },
+    {
+      "pairs": "climb:5",
+      "noisy_gnss+ref": 12.2,
+      "rtk": 5.78,
+      "rtk+ref": 0.42,
+      "terra": 0.54,
+      "terra+ref": 0.42
+    },
+    {
+      "pairs": "cross_line",
+      "noisy_gnss+ref": 5.35,
+      "rtk": 41.5,
+      "rtk+ref": 3.49,
+      "terra": 15.77,
+      "terra+ref": 1.26
+    },
+    {
+      "pairs": "crossing",
+      "noisy_gnss+ref": 11.02,
+      "rtk": 59.67,
+      "rtk+ref": 3.83,
+      "terra": 16.3,
+      "terra+ref": 1.59
+    },
+    {
+      "pairs": "turn:10",
+      "noisy_gnss+ref": 6.69,
+      "rtk": 10.44,
+      "rtk+ref": 0.8,
+      "terra": 3.45,
+      "terra+ref": 0.79
+    },
+    {
+      "pairs": "turn:5",
+      "noisy_gnss+ref": 7.27,
+      "rtk": 7.87,
+      "rtk+ref": 0.7,
+      "terra": 2.28,
+      "terra+ref": 0.67
+    },
+    {
+      "pairs": "within_line:1",
+      "noisy_gnss+ref": NaN,
+      "rtk": 10.02,
+      "rtk+ref": 0.4,
+      "terra": NaN,
+      "terra+ref": NaN
+    },
+    {
+      "pairs": "within_line:10",
+      "noisy_gnss+ref": 10.15,
+      "rtk": 6.8,
+      "rtk+ref": 0.57,
+      "terra": 0.79,
+      "terra+ref": 0.53
+    },
+    {
+      "pairs": "within_line:20",
+      "noisy_gnss+ref": 8.39,
+      "rtk": 7.2,
+      "rtk+ref": 0.66,
+      "terra": 1.11,
+      "terra+ref": 0.62
+    },
+    {
+      "pairs": "within_line:40",
+      "noisy_gnss+ref": 5.4,
+      "rtk": 6.87,
+      "rtk+ref": 0.78,
+      "terra": 1.76,
+      "terra+ref": 0.82
+    },
+    {
+      "pairs": "within_line:5",
+      "noisy_gnss+ref": 8.31,
+      "rtk": 7.09,
+      "rtk+ref": 0.5,
+      "terra": 0.61,
+      "terra+ref": 0.48
+    },
+    {
+      "pairs": "within_line:80",
+      "noisy_gnss+ref": 2.98,
+      "rtk": 6.76,
+      "rtk+ref": 0.9,
+      "terra": 2.48,
+      "terra+ref": 1.06
+    }
+  ],
+  "required_pose_quality_p90_px": [
+    {
+      "pos_sigma_m": 0.02,
+      "cross_line": 1.27,
+      "crossing": 1.58,
+      "within_line:10": 0.61,
+      "within_line:20": 0.7,
+      "within_line:40": 0.87,
+      "within_line:5": 0.56,
+      "within_line:80": 1.1
+    },
+    {
+      "pos_sigma_m": 0.05,
+      "cross_line": 1.27,
+      "crossing": 1.65,
+      "within_line:10": 0.84,
+      "within_line:20": 0.85,
+      "within_line:40": 0.92,
+      "within_line:5": 0.83,
+      "within_line:80": 1.12
+    },
+    {
+      "pos_sigma_m": 0.1,
+      "cross_line": 1.38,
+      "crossing": 1.84,
+      "within_line:10": 1.34,
+      "within_line:20": 1.21,
+      "within_line:40": 1.1,
+      "within_line:5": 1.4,
+      "within_line:80": 1.16
+    },
+    {
+      "pos_sigma_m": 0.2,
+      "cross_line": 1.76,
+      "crossing": 2.68,
+      "within_line:10": 2.46,
+      "within_line:20": 2.04,
+      "within_line:40": 1.54,
+      "within_line:5": 2.65,
+      "within_line:80": 1.26
+    },
+    {
+      "pos_sigma_m": 0.5,
+      "cross_line": 3.45,
+      "crossing": 5.83,
+      "within_line:10": 6.11,
+      "within_line:20": 4.75,
+      "within_line:40": 3.24,
+      "within_line:5": 5.46,
+      "within_line:80": 1.81
+    },
+    {
+      "pos_sigma_m": 1.0,
+      "cross_line": 4.91,
+      "crossing": 11.37,
+      "within_line:10": 11.07,
+      "within_line:20": 9.51,
+      "within_line:40": 6.3,
+      "within_line:5": 9.11,
+      "within_line:80": 3.02
+    }
+  ],
+  "step2": {
+    "sweep": {
+      "pairs": 781,
+      "rows": 14024030,
+      "valid_rows": 13774497,
+      "cells": 105516
+    },
+    "height_offset_m": -0.49929046630859375,
+    "height_vs_lidar": [
+      {
+        "grp": "cross_line",
+        "n": 51020.0,
+        "dz_median": 0.268,
+        "abs_dz_p50": 8.929,
+        "abs_dz_p90": 37.025,
+        "predicted_sigma_z": 0.038,
+        "px_per_m": 13.161
+      },
+      {
+        "grp": "crossing",
+        "n": 49529.0,
+        "dz_median": 1.179,
+        "abs_dz_p50": 3.12,
+        "abs_dz_p90": 11.27,
+        "predicted_sigma_z": 0.074,
+        "px_per_m": 6.759
+      },
+      {
+        "grp": "within:1",
+        "n": 160906.0,
+        "dz_median": -0.054,
+        "abs_dz_p50": 1.22,
+        "abs_dz_p90": 9.841,
+        "predicted_sigma_z": 2.702,
+        "px_per_m": 0.185
+      },
+      {
+        "grp": "within:10",
+        "n": 132911.0,
+        "dz_median": -0.082,
+        "abs_dz_p50": 0.447,
+        "abs_dz_p90": 9.421,
+        "predicted_sigma_z": 0.275,
+        "px_per_m": 1.817
+      },
+      {
+        "grp": "within:20",
+        "n": 108146.0,
+        "dz_median": -0.022,
+        "abs_dz_p50": 0.373,
+        "abs_dz_p90": 7.009,
+        "predicted_sigma_z": 0.139,
+        "px_per_m": 3.609
+      },
+      {
+        "grp": "within:40",
+        "n": 76200.0,
+        "dz_median": 0.078,
+        "abs_dz_p50": 0.41,
+        "abs_dz_p90": 2.26,
+        "predicted_sigma_z": 0.07,
+        "px_per_m": 7.186
+      },
+      {
+        "grp": "within:5",
+        "n": 146684.0,
+        "dz_median": -0.06,
+        "abs_dz_p50": 0.537,
+        "abs_dz_p90": 9.577,
+        "predicted_sigma_z": 0.545,
+        "px_per_m": 0.917
+      },
+      {
+        "grp": "within:80",
+        "n": 36545.0,
+        "dz_median": 0.171,
+        "abs_dz_p50": 0.627,
+        "abs_dz_p90": 9.747,
+        "predicted_sigma_z": 0.035,
+        "px_per_m": 14.146
+      }
+    ],
+    "across_noise_floor_paved": [
+      {
+        "grp": "cross_line",
+        "n": 48339.0,
+        "p50": 0.838,
+        "p90": 2.942,
+        "p99": 5.137
+      },
+      {
+        "grp": "crossing",
+        "n": 47514.0,
+        "p50": 0.857,
+        "p90": 2.802,
+        "p99": 5.106
+      },
+      {
+        "grp": "within:1",
+        "n": 160868.0,
+        "p50": 0.121,
+        "p90": 0.329,
+        "p99": 0.693
+      },
+      {
+        "grp": "within:10",
+        "n": 132087.0,
+        "p50": 0.175,
+        "p90": 0.599,
+        "p99": 3.036
+      },
+      {
+        "grp": "within:20",
+        "n": 106471.0,
+        "p50": 0.206,
+        "p90": 0.741,
+        "p99": 3.59
+      },
+      {
+        "grp": "within:40",
+        "n": 75412.0,
+        "p50": 0.257,
+        "p90": 0.973,
+        "p99": 3.631
+      },
+      {
+        "grp": "within:5",
+        "n": 146321.0,
+        "p50": 0.158,
+        "p90": 0.497,
+        "p99": 1.853
+      },
+      {
+        "grp": "within:80",
+        "n": 35343.0,
+        "p50": 0.344,
+        "p90": 1.577,
+        "p99": 4.533
+      }
+    ]
+  },
+  "step3": {
+    "label_counts": {
+      "failure": {
+        "pos": 2206,
+        "neg": 7889
+      },
+      "layered": {
+        "pos": 42950,
+        "neg": 5289
+      },
+      "vehicle": {
+        "pos": 221,
+        "neg": 105015
+      }
+    },
+    "cv_metrics": {
+      "failure": {
+        "n": 10095,
+        "positives": 2206,
+        "base_rate": 0.21852402179296682,
+        "auroc": 0.9257156211059456,
+        "auroc_ci95": [
+          0.8959860451241445,
+          0.9496859190866892
+        ],
+        "ap": 0.7198897270953878,
+        "ap_ci95": [
+          0.673436248940704,
+          0.7678985189357082
+        ],
+        "recall_at_5pct_fpr": 0.5167724388032638,
+        "brier": 0.10357116530956743
+      },
+      "layered": {
+        "n": 48239,
+        "positives": 42950,
+        "base_rate": 0.890358423682083,
+        "auroc": 0.9469753751223519,
+        "auroc_ci95": [
+          0.9144863514937149,
+          0.9629207275201783
+        ],
+        "ap": 0.9915244472113556,
+        "ap_ci95": [
+          0.9881134128225044,
+          0.9943312050642078
+        ],
+        "recall_at_5pct_fpr": 0.7123632130384168,
+        "brier": 0.07826574167626119
+      },
+      "vehicle": {
+        "n": 105236,
+        "positives": 221,
+        "base_rate": 0.002100041810787183,
+        "auroc": 0.9383235275805245,
+        "auroc_ci95": [
+          0.8784742675765405,
+          0.9854614344846023
+        ],
+        "ap": 0.05472297024675763,
+        "ap_ci95": [
+          0.013498814490066138,
+          0.14371301021299726
+        ],
+        "recall_at_5pct_fpr": 0.7194570135746606,
+        "brier": 0.046116680167677795
+      }
+    },
+    "ablation": {
+      "without_across": {
+        "failure": 0.9261909952540732,
+        "layered": 0.9462631054282495
+      },
+      "without_curve": {
+        "failure": 0.9155438899683241,
+        "layered": 0.9422674115957934
+      },
+      "without_photometric": {
+        "failure": 0.9133484807966198,
+        "layered": 0.9274053095459617
+      },
+      "without_height": {
+        "failure": 0.9239118080685927,
+        "layered": 0.9452855455267605
+      },
+      "without_glint": {
+        "failure": 0.9251711214773155,
+        "layered": 0.9472332917551771
+      },
+      "without_coverage/texture": {
+        "failure": 0.9296160680024644,
+        "layered": 0.9480300472062847
+      }
+    },
+    "failure_by_stratum": {
+      "vegetation (green_field)": {
+        "n": 4957,
+        "positives": 1644,
+        "base_rate": 0.33165220899737746,
+        "auroc": 0.9009602737281358,
+        "auroc_ci95": [
+          0.8195122311142669,
+          0.9449633420695341
+        ],
+        "ap": 0.7351179272231457,
+        "ap_ci95": [
+          0.6991997268752302,
+          0.7814160849778015
+        ],
+        "recall_at_5pct_fpr": 0.3108272506082725,
+        "brier": 0.12853028363929858
+      },
+      "non-vegetation": {
+        "n": 5138,
+        "positives": 562,
+        "base_rate": 0.10938108213312572,
+        "auroc": 0.899730607470821,
+        "auroc_ci95": [
+          0.8313688482387845,
+          0.948525456053245
+        ],
+        "ap": 0.6257018794856462,
+        "ap_ci95": [
+          0.4805569321289651,
+          0.7665669061143661
+        ],
+        "recall_at_5pct_fpr": 0.5889679715302492,
+        "brier": 0.07949129968861036
+      },
+      "hard surfaces (airstrip/road/car park/roof)": {
+        "n": 1899,
+        "positives": 8,
+        "base_rate": 0.00421274354923644,
+        "auroc": 0.9279481755684823,
+        "auroc_ci95": [
+          0.8373962217580981,
+          0.9678632605687096
+        ],
+        "ap": 0.04625448710230631,
+        "ap_ci95": [
+          0.017742157004842645,
+          0.4208333333333319
+        ],
+        "recall_at_5pct_fpr": 0.25,
+        "brier": 0.026732724208025117
+      },
+      "background": {
+        "n": 2410,
+        "positives": 480,
+        "base_rate": 0.1991701244813278,
+        "auroc": 0.8990490069084629,
+        "auroc_ci95": [
+          0.8503718701430412,
+          0.93609835908447
+        ],
+        "ap": 0.7232734311310411,
+        "ap_ci95": [
+          0.5760863931774571,
+          0.8296478517288105
+        ],
+        "recall_at_5pct_fpr": 0.5625,
+        "brier": 0.11381120610092908
+      }
+    },
+    "failure_class_only_baseline": {
+      "n": 10095,
+      "positives": 2206,
+      "base_rate": 0.21852402179296682,
+      "auroc": 0.6626442110943925,
+      "auroc_ci95": [
+        0.5677620002356569,
+        0.7474145824328842
+      ],
+      "ap": 0.5239948983757619,
+      "ap_ci95": [
+        0.20662809619177505,
+        0.4804656639535469
+      ],
+      "recall_at_5pct_fpr": 0.0,
+      "brier": 0.3838533927686974
+    }
+  }
+}

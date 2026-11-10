@@ -1,0 +1,14 @@
+# Camera self-calibration from images + RTK only (no LiDAR, no Terra outputs). Units: px, m, deg.
+seed: 0
+features: {type: rootsift, max_features: 8000, texture_window: 21, workers: 12}
+matching: {ratio: 0.8, mutual: true, local_k: 12, local_tol_px: 12.0, local_tol_mad: 4.0, max_matches_per_pair: 3000, min_matches: 40}
+selection:
+  segments: [climb, hover, descent, diagonal]   # all parallel cruise lines are held out for evaluation
+  hover_stride: 4                 # use every 4th time-grid frame within a hover run
+  within_run_steps: [1, 2, 4, 8]  # in time-grid steps (x 0.5 s)
+  cross_run_links: 2              # nearest frames per other run
+  cross_run_overlap: 0.6          # horizontal distance limit as a fraction of height above ground
+estimate: [f, k1, k2, k3]         # cx, cy, p1, p2 stay at the lab calibration
+max_tracks: 60000
+rounds: 8
+robustness: {rot_deg: 2.0, f_rel: 0.03}
