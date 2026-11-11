@@ -14,6 +14,14 @@ ABS = {"across_px", "gain", "dz_sigma"}
 PER_CLASS = ["across_px", "cost_min", "sharpness", "flatness", "gain", "contrast_ratio", "dz_sigma"]
 
 def accumulate(S: pd.DataFrame) -> pd.DataFrame:
+    """Dispatch: CUDA port (accumulate_cuda) when available, else the pandas reference accumulate_np."""
+    from ..backend import use_cuda
+    if use_cuda():
+        from .accumulate_cuda import accumulate as acc
+        return acc(S)
+    return accumulate_np(S)
+
+def accumulate_np(S: pd.DataFrame) -> pd.DataFrame:
     S = S.copy(); S["bcls"] = baseline_class(S.pair_type, S.gap_frames)
     for k in ABS:
         S[k] = S[k].abs()

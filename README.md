@@ -68,7 +68,20 @@ python -m venv .venv && .venv/bin/pip install -e .
 .venv/bin/python -m pytest -q tests
 ```
 
-`configs/step2.yaml: sweep.backend` is `auto` (CUDA when PyTorch sees a GPU, else CPU).
+**Compute backend.** `AERODIAG_BACKEND=auto` (default) runs every onboard stage and the step-3 training on the GPU
+through PyTorch when one is available; `cpu` forces the numpy/OpenCV reference code. Each CUDA path is an exact port of
+its CPU reference and is checked against it in `tests/` (agreement to float rounding):
+
+| Stage | GPU (CUDA) | CPU only (reason) |
+|---|---|---|
+| Track B / step 2 matching | descriptor 2-NN + ratio + mutual, local-consistency filter | homography outlier filter (one small MAGSAC call per pair) |
+| Step 2 poses | batched rotation-only refinement (all pairs in one solve), undistortion | — |
+| Step 2 sweep | projection, sampling, NCC, across search | cost-curve shape (small per-cell arrays) |
+| Step 3 | accumulation, motion / view fits, logistic regression, boosted trees, conformal head, bootstrap CIs | pandas bookkeeping, plots |
+| Features | optional Kornia SIFT (`features_type: sift_cuda`; 5x faster, equal results on airport, but half the matches on opposite-heading cross-line pairs, so not yet the default) | OpenCV SIFT (default, reference) |
+| Track A | — | LiDAR / Terra ground truth (evaluation only, never onboard) |
+
+Airport, RTX 5080 vs 12-core CPU: step 2 45 min → 5.3 min, step 3 45 min → 49 s; Track B + step 2 + step 3 end to end in under 8 min.
 
 Data: download the UAVScenes sequences (images, LiDAR, LiDAR labels, `sampleinfos_interpolated.json`,
 `rtk_positions_raw.csv`, DJI Terra model) and `calibration_results.py`, and place them as

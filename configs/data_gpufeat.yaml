@@ -1,0 +1,44 @@
+# Validation run: airport with GPU (Kornia) SIFT features instead of OpenCV SIFT; everything else identical.
+# Phase 0 and Track A are symlinked from outputs/ (they do not use image features).
+# Data configuration. All paths relative to `root`. Units: metres, seconds, pixels. Timestamps: int64 ns (Unix epoch).
+root: /home/edgar/Desktop/CC
+scene: HKairport_GNSS03
+paths:
+  calibration: calibration_results.py          # parsed with ast, never imported
+  cam_dir: data/airport/interval1_HKairport_GNSS03/interval1_CAM
+  lidar_dir: data/airport/interval1_HKairport_GNSS03/interval1_LIDAR
+  label_id_dir: data/airport/interval1_HKairport_GNSS03_Labels/interval1_LIDAR_label_id
+  sampleinfos: data/airport/interval1_HKairport_GNSS03/sampleinfos_interpolated.json
+  rtk_csv: data/airport/interval1_HKairport_GNSS03/rtk_positions_raw.csv
+  terra_dir: data/airport/HKairport_GNSS_Terra
+  outputs: outputs/gpufeat
+camera:
+  model: calibration          # 'calibration' = K+dist from calibration file (Phase 0 F2); 'json' = P3x3, no distortion
+reference_poses:
+  frame_period_ns: 100000000  # 10 Hz; orig_idx = round((t - t0) / period)
+  keyframe_modulo: 5          # Terra-registered grid: orig_idx % 5 == 0  (Phase 0 F1)
+  anchor_tol_m: 0.001         # a frame is "interpolated" if within these tolerances of its neighbours' interpolation
+  anchor_tol_deg: 0.001
+  exclude_off_grid_anchors: true   # Q3: the 284 non-grid anchors (turns) are not reference
+segmentation:
+  hover_speed: 1.5            # m/s horizontal
+  vertical_speed: 1.0         # m/s -> climb/descent
+  heading_window_s: 3.0
+  heading_stable_deg: 8.0
+  line_min_duration_s: 6.0
+  line_min_speed: 5.0
+  parallel_tol_deg: 15.0
+  smooth_frames: 11
+rtk:
+  fit_segments_exclude: [hover, climb, descent]   # Phase 0 §7: fit on flight frames only
+  altitude_datum: "assumed WGS84 ellipsoidal (DJI default), UNVERIFIED (Q8)"
+classes:
+  dynamic: [20, 24]                 # sedan, truck
+  water: [4, 5]                     # river, pool (absent in this sequence)
+  vehicle: [20, 24]                 # sedan, truck (LiDAR semantic classes; vehicle-head labels only)
+  healthy_class_based: [10, 3, 18, 1]   # hard, flat, textured surfaces (noise floor)
+  paved: [10, 3, 18]                # flat paved ground (height sanity checks)
+  vegetation: [13]             # confound strata / reported separately
+  report_separately: [0, 13]        # background, green_field (mostly forest)  (Q6)
+
+features_type: sift_cuda

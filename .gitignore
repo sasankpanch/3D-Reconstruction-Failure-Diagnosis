@@ -31,3 +31,8 @@ outputs/town_lo/*
 !outputs/town_lo/step3/
 # local run helpers
 outputs/*.sh
+
+outputs/gpufeat/*
+!outputs/gpufeat/track_b/
+!outputs/gpufeat/step2/
+!outputs/gpufeat/step3/

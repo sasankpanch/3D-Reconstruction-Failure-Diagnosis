@@ -103,8 +103,12 @@ class TrackB:
             z = np.load(mpath, allow_pickle=False); self.matches = {k: z[k] for k in z.files}
             self.match_info = pd.read_csv(self.out / "match_info.csv"); log("matches: cached"); return
         _G.update(ds=self.ds, fs=fs, cfg=self.cfg, P=P, agl=self.agl)
-        with Pool(20) as p:
-            res = p.map(_match_worker, P.index.tolist(), chunksize=4)
+        from ..backend import use_cuda
+        if use_cuda():                                                   # GPU matching in this process (exact port)
+            t0 = time.time(); res = [_match_worker(pid) for pid in P.index.tolist()]; log(f"matching on cuda: {time.time() - t0:.0f}s")
+        else:
+            with Pool(20) as p:
+                res = p.map(_match_worker, P.index.tolist(), chunksize=4)
         pid = np.concatenate([np.full(len(r[1]), r[0]) for r in res]); idx = np.concatenate([r[1] for r in res if len(r[1])] or [np.zeros((0, 2), int)])
         self.matches = dict(pair_id=pid.astype(np.int32), k1=idx[:, 0].astype(np.int32), k2=idx[:, 1].astype(np.int32))
         np.savez(mpath, **self.matches)

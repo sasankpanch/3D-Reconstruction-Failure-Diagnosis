@@ -9,6 +9,10 @@ import numpy as np, cv2
 from scipy.spatial import cKDTree
 
 def match_descriptors(d1, d2, ratio=0.8, mutual=True):
+    from ..backend import use_cuda
+    if use_cuda():
+        from .match_cuda import match_descriptors as m
+        return m(d1, d2, ratio, mutual)
     bf = cv2.BFMatcher(cv2.NORM_L2)
     if len(d1) < 2 or len(d2) < 2:
         return np.zeros((0, 2), int)
@@ -22,6 +26,10 @@ def match_descriptors(d1, d2, ratio=0.8, mutual=True):
     return pairs
 
 def local_consistency(uv1, uv2, k=12, tol_px=12.0, tol_mad=4.0):
+    from ..backend import use_cuda
+    if use_cuda():
+        from .match_cuda import local_consistency as lc
+        return lc(uv1, uv2, k, tol_px, tol_mad)
     if len(uv1) <= k:
         return np.ones(len(uv1), bool)
     d = uv2 - uv1; _, nn = cKDTree(uv1).query(uv1, k + 1); nn = nn[:, 1:]

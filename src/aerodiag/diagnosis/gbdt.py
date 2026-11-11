@@ -5,9 +5,23 @@ from __future__ import annotations
 import numpy as np
 
 def make_bins(X, n_bins=32):
-    """Per-feature bin edges from training quantiles (NaN -> bin n_bins)."""
+    """Per-feature bin edges from training quantiles (NaN -> bin n_bins). CUDA when available (same linear-interpolated
+    nanquantile as numpy, computed from sorted columns in float64)."""
     qs = np.linspace(0, 1, n_bins + 1)[1:-1]
+    from ..backend import use_cuda
+    if use_cuda():
+        return _make_bins_cuda(X, qs)
     return [np.unique(np.nanquantile(X[:, f], qs)) if np.isfinite(X[:, f]).any() else np.array([]) for f in range(X.shape[1])]
+
+def _make_bins_cuda(X, qs):
+    import torch
+    d = torch.device("cuda"); Xt = torch.as_tensor(np.asarray(X, np.float64), device=d)
+    Xs, _ = torch.sort(Xt, dim=0)                                        # NaN sorts last
+    n = (~torch.isnan(Xt)).sum(0); q = torch.as_tensor(qs, dtype=torch.float64, device=d)
+    pos = q[:, None] * (n[None, :] - 1).clamp(min=0); lo = torch.floor(pos).long(); hi = torch.minimum(lo + 1, (n - 1).clamp(min=0)[None, :])
+    fr = pos - lo; cols = torch.arange(Xt.shape[1], device=d)[None, :].expand_as(lo)
+    a = Xs[lo, cols]; b = Xs[hi, cols]; E = (a + (b - a) * fr).T.cpu().numpy(); nn = n.cpu().numpy()   # (F, Q)
+    return [np.unique(E[f]) if nn[f] > 0 else np.array([]) for f in range(Xt.shape[1])]
 
 def binarize(X, edges, n_bins=32):
     B = np.empty(X.shape, np.uint8)

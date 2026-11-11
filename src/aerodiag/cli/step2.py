@@ -111,14 +111,39 @@ class Step2:
         for p in np.unique(pid):
             s = pid == p; uv1[s] = fs.load(int(self.P.i[p]))["uv"][k1[s]]; uv2[s] = fs.load(int(self.P.j[p]))["uv"][k2[s]]
         _W.update(M=dict(pair_id=pid, uv1=uv1.astype(float), uv2=uv2.astype(float)), P=self.P, T=self.T, cam=self.cam, cfg=self.cfg)
-        with Pool(20) as p:
-            res = p.map(_refine_worker, self.P.index.tolist(), chunksize=8)
+        from ..backend import use_cuda
+        if use_cuda():
+            res = self._refine_cuda(pid, uv1.astype(float), uv2.astype(float))
+        else:
+            with Pool(20) as p:
+                res = p.map(_refine_worker, self.P.index.tolist(), chunksize=8)
         self.Tp = {r[0]: r[1][0] for r in res if r[1] is not None}
         self.pts = np.concatenate([r[2] for r in res if r[2] is not None])
         w = pd.Series({r[0]: r[1][1] for r in res if r[1] is not None})
         self.res["poses"] = dict(pairs=int(len(self.P)), refined=int(len(self.Tp)), dropped_few_matches=int(len(self.P) - len(self.Tp)),
                                  correction_deg_median=float(w.median()), terrain_points=int(len(self.pts)))
         log("poses:", self.res["poses"])
+
+    def _refine_cuda(self, pid, uv1, uv2):
+        """GPU path of _refine_worker for all pairs at once (batched LM, same rng draws); terrain points as before."""
+        from ..poses.refine_cuda import refine_rotation_batch, pixel_to_normalized
+        cam, cfg, P, T = self.cam, self.cfg, self.P, self.T; x1a = pixel_to_normalized(cam, uv1); x2a = pixel_to_normalized(cam, uv2)
+        order = np.argsort(pid, kind="stable"); ps, starts = np.unique(pid[order], return_index=True); ends = np.r_[starts[1:], len(order)]
+        rows = {int(p): order[a:b] for p, a, b in zip(ps, starts, ends)}; items, keep = [], []
+        for p in P.index.tolist():
+            r = rows.get(int(p), np.zeros(0, int))
+            if len(r) >= cfg["matching"]["min_matches"]:
+                i, j = int(P.i[p]), int(P.j[p]); R, t = relative_pose(T[i], T[j]); items.append((x1a[r], x2a[r], R, t)); keep.append(p)
+        t0 = time.time(); sol = refine_rotation_batch(items, cam.f, rngs=[np.random.default_rng(cfg["seed"] + p) for p in keep])
+        log(f"poses: {len(keep)} pairs refined on cuda in {time.time() - t0:.1f}s")
+        res = [(p, None, None) for p in P.index if p not in set(keep)]
+        for (x1, x2, _, _), p, (w, info) in zip(items, keep, sol):
+            i, j = int(P.i[p]), int(P.j[p]); Tj = T[j].copy(); Tj[:3, :3] = T[j][:3, :3] @ Rot.from_rotvec(w).as_matrix(); pts = None
+            if P.pair_type[p] == "within_line" and P.gap_frames[p] >= cfg["terrain"]["min_gap_frames"]:
+                R2r, t2r = relative_pose(T[i], Tj); d = decompose(x1, x2, R2r, t2r, cam.f)
+                ok = (d["depth1"] > 10) & (d["depth1"] < 300) & (np.abs(d["across_px"]) < 2.0); pts = triangulate_world(x1[ok], d["depth1"][ok], T[i])
+            res.append((p, (Tj, info["w_deg"]), pts))
+        return res
 
     def stage_terrain(self):
         tc = self.cfg["terrain"]; self.terr = CoarseTerrain(self.pts, tc["coarse_cell_m"], tc["min_points"], tc["smooth_cells"])
@@ -143,13 +168,15 @@ class Step2:
         s_w = s_enu @ self.sim.R.T                                          # ENU -> working frame (rotation of the nominal similarity)
         sun = {int(f): v for f, v in zip(fr, s_w)}
         P = self.P.loc[list(self.Tp.keys())]
-        use_cuda = cuda_available() if self.cfg["sweep"].get("backend", "auto") == "auto" else self.cfg["sweep"]["backend"] == "cuda"
+        from ..backend import use_cuda as _uc
+        use_cuda = _uc() if self.cfg["sweep"].get("backend", "auto") == "auto" else self.cfg["sweep"]["backend"] == "cuda"
         workers = self.cfg["sweep"].get("cuda_workers", 4) if use_cuda else self.cfg["sweep"]["workers"]
         _W.update(ds=self.ds, cam=self.cam, Tp=self.Tp, P=P, cells=self.cells, sun=sun, cfg=self.cfg, use_cuda=use_cuda)
         self.res["sweep_backend"] = dict(backend="cuda" if use_cuda else "cpu", workers=workers)
         log(f"sweeping {len(P)} pairs over {len(self.cells['id'])} candidate cells ({'cuda' if use_cuda else 'cpu'}, {workers} workers)")
         parts = []; t0 = time.time()
-        with Pool(workers) as p:
+        from multiprocessing.pool import ThreadPool                     # CUDA: threads share this process's GPU context
+        with (ThreadPool(workers) if use_cuda else Pool(workers)) as p:
             for k, (pid, df) in enumerate(p.imap_unordered(_sweep_worker, P.index.tolist(), chunksize=1)):
                 if df is not None:
                     parts.append(df)

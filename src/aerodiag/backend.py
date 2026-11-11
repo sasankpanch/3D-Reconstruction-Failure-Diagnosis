@@ -4,13 +4,16 @@ must match) and is checked against it in tests/. Override with AERODIAG_BACKEND=
 from __future__ import annotations
 import os
 
-_STATE = {"mode": os.environ.get("AERODIAG_BACKEND", "auto"), "resolved": None}
+_STATE = {"mode": os.environ.get("AERODIAG_BACKEND", "auto"), "resolved": None, "pid": None}
 
 def set_backend(mode: str):
     assert mode in ("auto", "cpu", "cuda"); _STATE.update(mode=mode, resolved=None)
 
 def use_cuda() -> bool:
-    """Resolved once per process. Initialises CUDA in this process when it returns True."""
+    """Resolved once per process. Initialises CUDA in this process when it returns True. A process forked after CUDA
+    was initialised cannot use it, so forked workers fall back to the CPU reference (parallel CPU stages stay safe)."""
+    if _STATE["resolved"] is not None and _STATE["pid"] != os.getpid():
+        return False
     if _STATE["resolved"] is None:
         ok = False
         if _STATE["mode"] != "cpu":
@@ -21,7 +24,7 @@ def use_cuda() -> bool:
                 ok = False
             if _STATE["mode"] == "cuda" and not ok:
                 raise RuntimeError("AERODIAG backend 'cuda' requested but no CUDA device / PyTorch available")
-        _STATE["resolved"] = ok
+        _STATE["resolved"] = ok; _STATE["pid"] = os.getpid()
     return _STATE["resolved"]
 
 def device():

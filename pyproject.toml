@@ -12,7 +12,7 @@ dependencies = ["numpy", "scipy", "opencv-python-headless", "open3d", "pandas", 
 
 [project.optional-dependencies]
 test = ["pytest"]
-cuda = ["torch>=2.7"]          # GPU plane sweep; install from the PyTorch CUDA index (e.g. cu128 for RTX 50-series)
+cuda = ["torch>=2.7", "kornia>=0.7"]         # GPU plane sweep; install from the PyTorch CUDA index (e.g. cu128 for RTX 50-series)
 
 [project.scripts]
 aerodiag-phase0 = "aerodiag.cli.phase0:main"

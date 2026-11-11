@@ -11,7 +11,11 @@ from __future__ import annotations
 import numpy as np, pandas as pd
 
 def _cell_fit(cell, X, y, n_cells):
-    """Per-cell OLS y ~ X (X includes intercept). Returns coef (n_cells,p), t-stats, n."""
+    """Per-cell OLS y ~ X (X includes intercept). Returns coef (n_cells,p), t-stats, n. CUDA when available (same
+    normal equations in float64)."""
+    from ..backend import use_cuda
+    if use_cuda():
+        return _cell_fit_cuda(cell, X, y, n_cells)
     p = X.shape[1]
     XtX = np.zeros((n_cells, p, p)); Xty = np.zeros((n_cells, p)); yy = np.zeros(n_cells); n = np.bincount(cell, minlength=n_cells)
     np.add.at(XtX, cell, X[:, :, None] * X[:, None, :]); np.add.at(Xty, cell, X * y[:, None]); np.add.at(yy, cell, y * y)
@@ -59,3 +63,16 @@ def fit_motion_reflectance(S: pd.DataFrame, grid, min_obs=6, pool_radii=(1, 2)):
     out["moving_score"] = np.clip(out.geo_t_dt, 0, None)
     out["reflective_score"] = np.clip(np.fmax(out.pho_t_dth, out.gain_t_dth), 0, None)
     return out
+
+def _cell_fit_cuda(cell, X, y, n_cells):
+    import torch
+    d = torch.device("cuda"); c = torch.as_tensor(cell, device=d); Xt = torch.as_tensor(X, dtype=torch.float64, device=d)
+    yt = torch.as_tensor(y, dtype=torch.float64, device=d); p = X.shape[1]
+    XtX = torch.zeros(n_cells, p * p, dtype=torch.float64, device=d).index_add_(0, c, (Xt[:, :, None] * Xt[:, None, :]).reshape(-1, p * p)).reshape(n_cells, p, p)
+    Xty = torch.zeros(n_cells, p, dtype=torch.float64, device=d).index_add_(0, c, Xt * yt[:, None])
+    yy = torch.zeros(n_cells, dtype=torch.float64, device=d).index_add_(0, c, yt * yt); n = torch.bincount(c, minlength=n_cells)
+    ok = n > p + 1; A = XtX[ok] + 1e-6 * torch.eye(p, dtype=torch.float64, device=d); b = Xty[ok]
+    co = torch.linalg.solve(A, b[..., None])[..., 0]; rss = torch.clamp(yy[ok] - (co * b).sum(1), min=0); s2 = rss / torch.clamp(n[ok] - p, min=1)
+    cov = torch.linalg.inv(A) * s2[:, None, None]; se = torch.sqrt(torch.clamp(torch.diagonal(cov, dim1=1, dim2=2), min=1e-12))
+    coef = torch.full((n_cells, p), float("nan"), dtype=torch.float64, device=d); tst = coef.clone(); coef[ok] = co; tst[ok] = co / se
+    return coef.cpu().numpy(), tst.cpu().numpy(), n.cpu().numpy()
