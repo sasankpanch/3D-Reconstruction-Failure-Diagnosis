@@ -1,0 +1,90 @@
+{
+  "params": {
+    "root": "/home/edgar/Desktop/CC",
+    "scene": "HKairport_GNSS02",
+    "paths": {
+      "calibration": "calibration_results.py",
+      "cam_dir": "data/airport_02/interval1_HKairport_GNSS02/interval1_CAM",
+      "lidar_dir": "data/airport_02/interval1_HKairport_GNSS02/interval1_LIDAR",
+      "label_id_dir": "data/airport_02/interval1_HKairport_GNSS02_Labels/interval1_LIDAR_label_id",
+      "sampleinfos": "data/airport_02/interval1_HKairport_GNSS02/sampleinfos_interpolated.json",
+      "rtk_csv": "data/airport_02/interval1_HKairport_GNSS02/rtk_positions_raw.csv",
+      "terra_dir": "data/terra/HKairport_GNSS_Terra",
+      "outputs": "outputs/airport_02"
+    },
+    "camera": {
+      "model": "calibration"
+    },
+    "reference_poses": {
+      "frame_period_ns": 100000000,
+      "keyframe_modulo": 5,
+      "anchor_tol_m": 0.001,
+      "anchor_tol_deg": 0.001,
+      "exclude_off_grid_anchors": true
+    },
+    "segmentation": {
+      "hover_speed": 1.5,
+      "vertical_speed": 1.0,
+      "heading_window_s": 3.0,
+      "heading_stable_deg": 8.0,
+      "line_min_duration_s": 6.0,
+      "line_min_speed": 5.0,
+      "parallel_tol_deg": 15.0,
+      "smooth_frames": 11
+    },
+    "rtk": {
+      "fit_segments_exclude": [
+        "hover",
+        "climb",
+        "descent"
+      ],
+      "altitude_datum": "assumed WGS84 ellipsoidal (DJI default), UNVERIFIED (Q8)"
+    },
+    "classes": {
+      "dynamic": [
+        20,
+        24
+      ],
+      "water": [
+        4,
+        5
+      ],
+      "vehicle": [
+        20,
+        24
+      ],
+      "healthy_class_based": [
+        10,
+        3,
+        18,
+        1
+      ],
+      "paved": [
+        10,
+        3,
+        18
+      ],
+      "vegetation": [
+        13
+      ],
+      "report_separately": [
+        0,
+        13
+      ]
+    }
+  },
+  "created": "2026-11-11T03:06:44",
+  "python": "3.12.3",
+  "platform": "Linux-7.0.0-42-generic-x86_64-with-glibc2.39",
+  "argv": [
+    "/home/edgar/Desktop/CC/src/aerodiag/cli/phase0.py",
+    "--data",
+    "configs/data_airport_02.yaml"
+  ],
+  "versions": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "opencv": "5.0.0",
+    "open3d": "0.20.0"
+  }
+}

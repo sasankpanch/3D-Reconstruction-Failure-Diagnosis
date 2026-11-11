@@ -1,0 +1,98 @@
+{
+  "params": {
+    "root": "/home/edgar/Desktop/CC",
+    "scene": "AMtown02",
+    "paths": {
+      "calibration": "calibration_results.py",
+      "cam_dir": "data/town_02/interval1_AMtown02/interval1_CAM",
+      "lidar_dir": "data/town_02/interval1_AMtown02/interval1_LIDAR",
+      "label_id_dir": "data/town_02/interval1_AMtown02_Labels/interval1_LIDAR_label_id",
+      "sampleinfos": "data/town_02/interval1_AMtown02/sampleinfos_interpolated.json",
+      "rtk_csv": "data/town_02/interval1_AMtown02/rtk_positions_raw.csv",
+      "terra_dir": "data/terra/AMtown",
+      "outputs": "outputs/town_02"
+    },
+    "camera": {
+      "dist_override": [
+        -0.04158,
+        0.10776,
+        0.0016,
+        0.00013,
+        -0.05414
+      ],
+      "model": "calibration"
+    },
+    "reference_poses": {
+      "frame_period_ns": 100000000,
+      "keyframe_modulo": 5,
+      "anchor_tol_m": 0.001,
+      "anchor_tol_deg": 0.001,
+      "exclude_off_grid_anchors": true
+    },
+    "segmentation": {
+      "hover_speed": 1.5,
+      "vertical_speed": 1.0,
+      "heading_window_s": 3.0,
+      "heading_stable_deg": 8.0,
+      "line_min_duration_s": 6.0,
+      "line_min_speed": 5.0,
+      "parallel_tol_deg": 15.0,
+      "smooth_frames": 11
+    },
+    "rtk": {
+      "fit_segments_exclude": [
+        "hover",
+        "climb",
+        "descent"
+      ],
+      "altitude_datum": "assumed WGS84 ellipsoidal (DJI default), UNVERIFIED (Q8)"
+    },
+    "classes": {
+      "dynamic": [
+        20,
+        24
+      ],
+      "water": [
+        4,
+        5
+      ],
+      "vehicle": [
+        20,
+        24
+      ],
+      "healthy_class_based": [
+        3,
+        19,
+        18,
+        1
+      ],
+      "paved": [
+        3,
+        19,
+        18
+      ],
+      "vegetation": [
+        13,
+        14
+      ],
+      "report_separately": [
+        0,
+        13
+      ]
+    }
+  },
+  "created": "2026-11-11T03:22:02",
+  "python": "3.12.3",
+  "platform": "Linux-7.0.0-42-generic-x86_64-with-glibc2.39",
+  "argv": [
+    "/home/edgar/Desktop/CC/src/aerodiag/cli/phase0.py",
+    "--data",
+    "configs/data_town_02.yaml"
+  ],
+  "versions": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "opencv": "5.0.0",
+    "open3d": "0.20.0"
+  }
+}

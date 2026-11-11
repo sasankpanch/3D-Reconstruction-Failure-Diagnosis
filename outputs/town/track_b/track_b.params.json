@@ -5,12 +5,12 @@
       "scene": "AMtown03",
       "paths": {
         "calibration": "calibration_results.py",
-        "cam_dir": "data/town/interval1_AMtown03/interval1_CAM",
-        "lidar_dir": "data/town/interval1_AMtown03/interval1_LIDAR",
-        "label_id_dir": "data/town/interval1_AMtown03_Labels/interval1_LIDAR_label_id",
-        "sampleinfos": "data/town/interval1_AMtown03/sampleinfos_interpolated.json",
-        "rtk_csv": "data/town/interval1_AMtown03/rtk_positions_raw.csv",
-        "terra_dir": "data/town/AMtown",
+        "cam_dir": "data/town_03/interval1_AMtown03/interval1_CAM",
+        "lidar_dir": "data/town_03/interval1_AMtown03/interval1_LIDAR",
+        "label_id_dir": "data/town_03/interval1_AMtown03_Labels/interval1_LIDAR_label_id",
+        "sampleinfos": "data/town_03/interval1_AMtown03/sampleinfos_interpolated.json",
+        "rtk_csv": "data/town_03/interval1_AMtown03/rtk_positions_raw.csv",
+        "terra_dir": "data/terra/AMtown",
         "outputs": "outputs/town"
       },
       "camera": {
@@ -56,6 +56,10 @@
         "water": [
           4,
           5
+        ],
+        "vehicle": [
+          20,
+          24
         ],
         "healthy_class_based": [
           3,
@@ -196,11 +200,11 @@
       ]
     }
   },
-  "created": "2026-11-09T16:20:37",
+  "created": "2026-11-11T03:03:24",
   "python": "3.12.3",
   "platform": "Linux-7.0.0-42-generic-x86_64-with-glibc2.39",
   "argv": [
-    ".venv/bin/aerodiag-track-b",
+    "/home/edgar/Desktop/CC/src/aerodiag/cli/track_b.py",
     "--data",
     "configs/data_town.yaml"
   ],

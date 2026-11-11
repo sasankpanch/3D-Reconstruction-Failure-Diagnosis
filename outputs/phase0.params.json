@@ -49,11 +49,23 @@
         4,
         5
       ],
+      "vehicle": [
+        20,
+        24
+      ],
       "healthy_class_based": [
         10,
         3,
         18,
         1
+      ],
+      "paved": [
+        10,
+        3,
+        18
+      ],
+      "vegetation": [
+        13
       ],
       "report_separately": [
         0,
@@ -61,11 +73,11 @@
       ]
     }
   },
-  "created": "2026-11-09T15:33:41",
+  "created": "2026-11-11T02:11:27",
   "python": "3.12.3",
   "platform": "Linux-7.0.0-42-generic-x86_64-with-glibc2.39",
   "argv": [
-    ".venv/bin/aerodiag-phase0",
+    "/home/edgar/Desktop/CC/src/aerodiag/cli/phase0.py",
     "--data",
     "configs/data.yaml"
   ],

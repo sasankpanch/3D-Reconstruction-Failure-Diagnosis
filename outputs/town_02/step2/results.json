@@ -1,0 +1,500 @@
+{
+  "poses": {
+    "pairs": 3029,
+    "refined": 2822,
+    "dropped_few_matches": 207,
+    "correction_deg_median": 0.2344291383049545,
+    "terrain_points": 1214243
+  },
+  "terrain": {
+    "points": 1214243,
+    "cells": 378815
+  },
+  "sweep_backend": {
+    "backend": "cuda",
+    "workers": 4
+  },
+  "sweep_seconds": 389.99361395835876,
+  "sweep": {
+    "pairs": 2822,
+    "rows": 49672672,
+    "valid_rows": 48951355,
+    "cells": 378809
+  },
+  "evaluate": {
+    "eval_pair_subsample_every": 4,
+    "paved_rows": 59695,
+    "height_offset_vs_lidar_m": -0.08872127532958984,
+    "height_vs_lidar": [
+      {
+        "grp": "crossing",
+        "n": 224.0,
+        "dz_median": -0.348,
+        "abs_dz_p50": 0.418,
+        "abs_dz_p90": 10.816,
+        "predicted_sigma_z": 0.037,
+        "px_per_m": 13.647
+      },
+      {
+        "grp": "cross_line",
+        "n": 264.0,
+        "dz_median": -6.019,
+        "abs_dz_p50": 6.148,
+        "abs_dz_p90": 13.618,
+        "predicted_sigma_z": 0.025,
+        "px_per_m": 20.155
+      },
+      {
+        "grp": "within:1",
+        "n": 11560.0,
+        "dz_median": 0.975,
+        "abs_dz_p50": 2.736,
+        "abs_dz_p90": 11.824,
+        "predicted_sigma_z": 2.651,
+        "px_per_m": 0.189
+      },
+      {
+        "grp": "within:5",
+        "n": 16468.0,
+        "dz_median": 0.709,
+        "abs_dz_p50": 5.809,
+        "abs_dz_p90": 22.647,
+        "predicted_sigma_z": 0.552,
+        "px_per_m": 0.906
+      },
+      {
+        "grp": "within:10",
+        "n": 13630.0,
+        "dz_median": -0.085,
+        "abs_dz_p50": 1.513,
+        "abs_dz_p90": 7.23,
+        "predicted_sigma_z": 0.284,
+        "px_per_m": 1.761
+      },
+      {
+        "grp": "within:20",
+        "n": 6773.0,
+        "dz_median": -5.366,
+        "abs_dz_p50": 5.473,
+        "abs_dz_p90": 8.777,
+        "predicted_sigma_z": 0.147,
+        "px_per_m": 3.39
+      },
+      {
+        "grp": "within:40",
+        "n": 5809.0,
+        "dz_median": -0.025,
+        "abs_dz_p50": 0.295,
+        "abs_dz_p90": 7.804,
+        "predicted_sigma_z": 0.072,
+        "px_per_m": 6.955
+      },
+      {
+        "grp": "within:80",
+        "n": 3982.0,
+        "dz_median": -0.141,
+        "abs_dz_p50": 0.831,
+        "abs_dz_p90": 18.41,
+        "predicted_sigma_z": 0.038,
+        "px_per_m": 13.005
+      }
+    ],
+    "signals_by_class": [
+      {
+        "cls": "green_field",
+        "rows": 4930369,
+        "textureless_frac": 0.0086,
+        "across_px_p50": 0.25440001487731934,
+        "across_px_p90": 1.0750999450683594,
+        "cost_min_p50": 0.14589999616146088,
+        "cost_min_p90": 0.4915,
+        "sharpness_p50": 0.07810000330209732,
+        "sharpness_p90": 0.2312,
+        "flatness_p50": 0.6883999705314636,
+        "flatness_p90": 0.9359999895095825,
+        "gain_p50": 0.053599998354911804,
+        "gain_p90": 0.1945,
+        "contrast_ratio_p50": 0.9811000227928162,
+        "contrast_ratio_p90": 1.2196,
+        "dz_sigma_p50": 11.13010025024414,
+        "dz_sigma_p90": 73.5182,
+        "multi_minima_frac": 0.2653,
+        "periodic_frac": 0.0295,
+        "below_terrain_frac": 0.2364,
+        "boundary_frac": 0.0251,
+        "glint_max": 1.0
+      },
+      {
+        "cls": "background",
+        "rows": 1637734,
+        "textureless_frac": 0.014,
+        "across_px_p50": 0.24079999327659607,
+        "across_px_p90": 1.0430999994277954,
+        "cost_min_p50": 0.09160000085830688,
+        "cost_min_p90": 0.3799,
+        "sharpness_p50": 0.06639999896287918,
+        "sharpness_p90": 0.2154,
+        "flatness_p50": 0.7023000121116638,
+        "flatness_p90": 0.963100016117096,
+        "gain_p50": 0.04619999974966049,
+        "gain_p90": 0.1653,
+        "contrast_ratio_p50": 0.9846000075340271,
+        "contrast_ratio_p90": 1.181,
+        "dz_sigma_p50": 8.396300315856934,
+        "dz_sigma_p90": 54.7494,
+        "multi_minima_frac": 0.2451,
+        "periodic_frac": 0.0296,
+        "below_terrain_frac": 0.2897,
+        "boundary_frac": 0.0243,
+        "glint_max": 1.0
+      },
+      {
+        "cls": "roof",
+        "rows": 771468,
+        "textureless_frac": 0.0508,
+        "across_px_p50": 0.24969999492168427,
+        "across_px_p90": 1.159500002861023,
+        "cost_min_p50": 0.10740000009536743,
+        "cost_min_p90": 0.4064,
+        "sharpness_p50": 0.07090000063180923,
+        "sharpness_p90": 0.2704,
+        "flatness_p50": 0.7085000276565552,
+        "flatness_p90": 0.9629999995231628,
+        "gain_p50": 0.04349999874830246,
+        "gain_p90": 0.1392,
+        "contrast_ratio_p50": 0.9869999885559082,
+        "contrast_ratio_p90": 1.2411,
+        "dz_sigma_p50": 12.062899589538574,
+        "dz_sigma_p90": 67.5076,
+        "multi_minima_frac": 0.2722,
+        "periodic_frac": 0.035,
+        "below_terrain_frac": 0.2377,
+        "boundary_frac": 0.0267,
+        "glint_max": 1.0
+      },
+      {
+        "cls": "dirt_motor_road",
+        "rows": 455732,
+        "textureless_frac": 0.0219,
+        "across_px_p50": 0.24549999833106995,
+        "across_px_p90": 0.9611999988555908,
+        "cost_min_p50": 0.11410000175237656,
+        "cost_min_p90": 0.3739,
+        "sharpness_p50": 0.06719999760389328,
+        "sharpness_p90": 0.1987,
+        "flatness_p50": 0.6583999991416931,
+        "flatness_p90": 0.9277999997138977,
+        "gain_p50": 0.05130000039935112,
+        "gain_p90": 0.1657,
+        "contrast_ratio_p50": 0.9886999726295471,
+        "contrast_ratio_p90": 1.1997,
+        "dz_sigma_p50": 6.174900054931641,
+        "dz_sigma_p90": 48.2542,
+        "multi_minima_frac": 0.249,
+        "periodic_frac": 0.0304,
+        "below_terrain_frac": 0.2675,
+        "boundary_frac": 0.026,
+        "glint_max": 1.0
+      },
+      {
+        "cls": "wild_field",
+        "rows": 415299,
+        "textureless_frac": 0.0095,
+        "across_px_p50": 0.2752000093460083,
+        "across_px_p90": 1.0527000427246094,
+        "cost_min_p50": 0.12520000338554382,
+        "cost_min_p90": 0.3734,
+        "sharpness_p50": 0.0786999985575676,
+        "sharpness_p90": 0.2029,
+        "flatness_p50": 0.739300012588501,
+        "flatness_p90": 0.9437999725341797,
+        "gain_p50": 0.09139999747276306,
+        "gain_p90": 0.2378,
+        "contrast_ratio_p50": 0.9825999736785889,
+        "contrast_ratio_p90": 1.2296,
+        "dz_sigma_p50": 5.770999908447266,
+        "dz_sigma_p90": 39.2229,
+        "multi_minima_frac": 0.2276,
+        "periodic_frac": 0.0278,
+        "below_terrain_frac": 0.1616,
+        "boundary_frac": 0.0198,
+        "glint_max": 1.0
+      },
+      {
+        "cls": "paved_motor_road",
+        "rows": 89274,
+        "textureless_frac": 0.016,
+        "across_px_p50": 0.24740000069141388,
+        "across_px_p90": 0.9373000264167786,
+        "cost_min_p50": 0.09809999912977219,
+        "cost_min_p90": 0.3571,
+        "sharpness_p50": 0.06129999831318855,
+        "sharpness_p90": 0.2275,
+        "flatness_p50": 0.6428999900817871,
+        "flatness_p90": 0.9325000047683716,
+        "gain_p50": 0.03610000014305115,
+        "gain_p90": 0.1203,
+        "contrast_ratio_p50": 0.9876000285148621,
+        "contrast_ratio_p90": 1.1601,
+        "dz_sigma_p50": 8.075799942016602,
+        "dz_sigma_p90": 50.2069,
+        "multi_minima_frac": 0.2863,
+        "periodic_frac": 0.0368,
+        "below_terrain_frac": 0.3382,
+        "boundary_frac": 0.0247,
+        "glint_max": 0.9998
+      },
+      {
+        "cls": "none",
+        "rows": 59132,
+        "textureless_frac": 0.0207,
+        "across_px_p50": 0.2669000029563904,
+        "across_px_p90": 1.1655999422073364,
+        "cost_min_p50": 0.10809999704360962,
+        "cost_min_p90": 0.4461,
+        "sharpness_p50": 0.05779999867081642,
+        "sharpness_p90": 0.1842,
+        "flatness_p50": 0.5931000113487244,
+        "flatness_p90": 0.8962000012397766,
+        "gain_p50": 0.04270000010728836,
+        "gain_p90": 0.1407,
+        "contrast_ratio_p50": 0.9819999933242798,
+        "contrast_ratio_p90": 1.1463,
+        "dz_sigma_p50": 15.257699966430664,
+        "dz_sigma_p90": 63.4774,
+        "multi_minima_frac": 0.3709,
+        "periodic_frac": 0.0469,
+        "below_terrain_frac": 0.3209,
+        "boundary_frac": 0.0429,
+        "glint_max": 0.9998
+      },
+      {
+        "cls": "transparent_roof",
+        "rows": 46773,
+        "textureless_frac": 0.0248,
+        "across_px_p50": 0.2599000036716461,
+        "across_px_p90": 1.0820000171661377,
+        "cost_min_p50": 0.12809999287128448,
+        "cost_min_p90": 0.3826,
+        "sharpness_p50": 0.07509999722242355,
+        "sharpness_p90": 0.237,
+        "flatness_p50": 0.692300021648407,
+        "flatness_p90": 0.9394000172615051,
+        "gain_p50": 0.04309999942779541,
+        "gain_p90": 0.1492,
+        "contrast_ratio_p50": 0.984499990940094,
+        "contrast_ratio_p90": 1.2484,
+        "dz_sigma_p50": 9.201199531555176,
+        "dz_sigma_p90": 58.2085,
+        "multi_minima_frac": 0.2687,
+        "periodic_frac": 0.0347,
+        "below_terrain_frac": 0.2313,
+        "boundary_frac": 0.0168,
+        "glint_max": 1.0
+      },
+      {
+        "cls": "paved_walk",
+        "rows": 6855,
+        "textureless_frac": 0.0328,
+        "across_px_p50": 0.1647000014781952,
+        "across_px_p90": 0.5781000256538391,
+        "cost_min_p50": 0.05090000107884407,
+        "cost_min_p90": 0.3045,
+        "sharpness_p50": 0.08169999718666077,
+        "sharpness_p90": 0.4281,
+        "flatness_p50": 0.7285000085830688,
+        "flatness_p90": 0.9894000291824341,
+        "gain_p50": 0.022099999710917473,
+        "gain_p90": 0.0641,
+        "contrast_ratio_p50": 0.9983999729156494,
+        "contrast_ratio_p90": 1.2046,
+        "dz_sigma_p50": 2.2695999145507812,
+        "dz_sigma_p90": 18.7286,
+        "multi_minima_frac": 0.1804,
+        "periodic_frac": 0.0164,
+        "below_terrain_frac": 0.2434,
+        "boundary_frac": 0.0012,
+        "glint_max": 0.9985
+      },
+      {
+        "cls": "bridge",
+        "rows": 2676,
+        "textureless_frac": 0.0202,
+        "across_px_p50": 0.43209999799728394,
+        "across_px_p90": 2.8464999198913574,
+        "cost_min_p50": 0.15080000460147858,
+        "cost_min_p90": 0.4559,
+        "sharpness_p50": 0.04839999973773956,
+        "sharpness_p90": 0.125,
+        "flatness_p50": 0.7486000061035156,
+        "flatness_p90": 0.9584000110626221,
+        "gain_p50": 0.10499999672174454,
+        "gain_p90": 0.3059,
+        "contrast_ratio_p50": 0.9843999743461609,
+        "contrast_ratio_p90": 1.668,
+        "dz_sigma_p50": 15.756799697875977,
+        "dz_sigma_p90": 79.8185,
+        "multi_minima_frac": 0.3288,
+        "periodic_frac": 0.0275,
+        "below_terrain_frac": 0.1213,
+        "boundary_frac": 0.0378,
+        "glint_max": 0.1825
+      },
+      {
+        "cls": "solar_board",
+        "rows": 2100,
+        "textureless_frac": 0.0019,
+        "across_px_p50": 0.1979999989271164,
+        "across_px_p90": 0.4934000074863434,
+        "cost_min_p50": 0.07800000160932541,
+        "cost_min_p90": 0.2158,
+        "sharpness_p50": 0.22579999268054962,
+        "sharpness_p90": 0.5305,
+        "flatness_p50": 0.9136000275611877,
+        "flatness_p90": 1.0364999771118164,
+        "gain_p50": 0.03280000016093254,
+        "gain_p90": 0.0838,
+        "contrast_ratio_p50": 0.9749000072479248,
+        "contrast_ratio_p90": 1.1232,
+        "dz_sigma_p50": 5.720699787139893,
+        "dz_sigma_p90": 9.4943,
+        "multi_minima_frac": 0.0487,
+        "periodic_frac": 0.0057,
+        "below_terrain_frac": 0.0205,
+        "boundary_frac": 0.0143,
+        "glint_max": 0.7653
+      }
+    ],
+    "across_noise_floor_paved": [
+      {
+        "grp": "crossing",
+        "n": 223,
+        "p50": 0.7760000228881836,
+        "p90": 2.124000072479248,
+        "p99": 4.436999797821045
+      },
+      {
+        "grp": "cross_line",
+        "n": 248,
+        "p50": 1.0499999523162842,
+        "p90": 3.0859999656677246,
+        "p99": 5.184999942779541
+      },
+      {
+        "grp": "within:1",
+        "n": 11559,
+        "p50": 0.16099999845027924,
+        "p90": 0.4819999933242798,
+        "p99": 1.0240000486373901
+      },
+      {
+        "grp": "within:5",
+        "n": 16208,
+        "p50": 0.18199999630451202,
+        "p90": 0.6819999814033508,
+        "p99": 3.61899995803833
+      },
+      {
+        "grp": "within:10",
+        "n": 13399,
+        "p50": 0.25099998712539673,
+        "p90": 0.8920000195503235,
+        "p99": 4.206999778747559
+      },
+      {
+        "grp": "within:20",
+        "n": 6482,
+        "p50": 0.29499998688697815,
+        "p90": 1.1890000104904175,
+        "p99": 4.500999927520752
+      },
+      {
+        "grp": "within:40",
+        "n": 5631,
+        "p50": 0.41499999165534973,
+        "p90": 1.1039999723434448,
+        "p99": 4.01200008392334
+      },
+      {
+        "grp": "within:80",
+        "n": 3595,
+        "p50": 0.5759999752044678,
+        "p90": 2.7980000972747803,
+        "p99": 5.160999774932861
+      }
+    ],
+    "flag_rates_by_pairs": [
+      {
+        "grp": "crossing",
+        "below_terrain": 0.35280001163482666,
+        "periodic": 0.04410000145435333,
+        "at_boundary": 0.031199999153614044
+      },
+      {
+        "grp": "cross_line",
+        "below_terrain": 0.5856000185012817,
+        "periodic": 0.05649999901652336,
+        "at_boundary": 0.18369999527931213
+      },
+      {
+        "grp": "within:1",
+        "below_terrain": 0.031199999153614044,
+        "periodic": 0.007000000216066837,
+        "at_boundary": 0.0005000000237487257
+      },
+      {
+        "grp": "within:5",
+        "below_terrain": 0.13359999656677246,
+        "periodic": 0.021400000900030136,
+        "at_boundary": 0.010700000450015068
+      },
+      {
+        "grp": "within:10",
+        "below_terrain": 0.20250000059604645,
+        "periodic": 0.035100001841783524,
+        "at_boundary": 0.016599999740719795
+      },
+      {
+        "grp": "within:20",
+        "below_terrain": 0.37860000133514404,
+        "periodic": 0.03290000185370445,
+        "at_boundary": 0.04190000146627426
+      },
+      {
+        "grp": "within:40",
+        "below_terrain": 0.3009999990463257,
+        "periodic": 0.03180000185966492,
+        "at_boundary": 0.03579999879002571
+      },
+      {
+        "grp": "within:80",
+        "below_terrain": 0.4618000090122223,
+        "periodic": 0.05689999833703041,
+        "at_boundary": 0.061400000005960464
+      }
+    ],
+    "spearman_with_abs_terra_error_gt_good": {
+      "across": 0.0209974006733052,
+      "cost": 0.08535446867901335,
+      "sharp": -0.0502014980353998,
+      "flat": -0.08677550620568367,
+      "periodic": 0.006593239080280305,
+      "below": 0.010074534531200005,
+      "dzs": 0.12229944665722856,
+      "gain": -0.032024168434160234,
+      "textureless": -0.050746983209568344
+    },
+    "glint": {
+      "sun_azimuth_deg": [
+        154.4217145267324,
+        160.72408720063902
+      ],
+      "sun_elevation_deg": [
+        69.47003076263127,
+        70.18632141355451
+      ],
+      "cells_glint_gt_0_5": 94942,
+      "specular_deg_min": 0.0054099708795547485
+    }
+  }
+}

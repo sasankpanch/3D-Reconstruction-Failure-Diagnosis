@@ -1,0 +1,217 @@
+{
+  "params": {
+    "data": {
+      "root": "/home/edgar/Desktop/CC",
+      "scene": "AMtown02",
+      "paths": {
+        "calibration": "calibration_results.py",
+        "cam_dir": "data/town_02/interval1_AMtown02/interval1_CAM",
+        "lidar_dir": "data/town_02/interval1_AMtown02/interval1_LIDAR",
+        "label_id_dir": "data/town_02/interval1_AMtown02_Labels/interval1_LIDAR_label_id",
+        "sampleinfos": "data/town_02/interval1_AMtown02/sampleinfos_interpolated.json",
+        "rtk_csv": "data/town_02/interval1_AMtown02/rtk_positions_raw.csv",
+        "terra_dir": "data/terra/AMtown",
+        "outputs": "outputs/town_02"
+      },
+      "camera": {
+        "dist_override": [
+          -0.04158,
+          0.10776,
+          0.0016,
+          0.00013,
+          -0.05414
+        ],
+        "model": "calibration"
+      },
+      "reference_poses": {
+        "frame_period_ns": 100000000,
+        "keyframe_modulo": 5,
+        "anchor_tol_m": 0.001,
+        "anchor_tol_deg": 0.001,
+        "exclude_off_grid_anchors": true
+      },
+      "segmentation": {
+        "hover_speed": 1.5,
+        "vertical_speed": 1.0,
+        "heading_window_s": 3.0,
+        "heading_stable_deg": 8.0,
+        "line_min_duration_s": 6.0,
+        "line_min_speed": 5.0,
+        "parallel_tol_deg": 15.0,
+        "smooth_frames": 11
+      },
+      "rtk": {
+        "fit_segments_exclude": [
+          "hover",
+          "climb",
+          "descent"
+        ],
+        "altitude_datum": "assumed WGS84 ellipsoidal (DJI default), UNVERIFIED (Q8)"
+      },
+      "classes": {
+        "dynamic": [
+          20,
+          24
+        ],
+        "water": [
+          4,
+          5
+        ],
+        "vehicle": [
+          20,
+          24
+        ],
+        "healthy_class_based": [
+          3,
+          19,
+          18,
+          1
+        ],
+        "paved": [
+          3,
+          19,
+          18
+        ],
+        "vegetation": [
+          13,
+          14
+        ],
+        "report_separately": [
+          0,
+          13
+        ]
+      }
+    },
+    "track_b": {
+      "seed": 0,
+      "features": {
+        "type": "rootsift",
+        "max_features": 8000,
+        "texture_window": 21,
+        "workers": 12
+      },
+      "matching": {
+        "ratio": 0.8,
+        "mutual": true,
+        "local_k": 12,
+        "local_tol_px": 12.0,
+        "local_tol_mad": 4.0,
+        "max_matches_per_pair": 3000,
+        "min_matches": 40
+      },
+      "pairs": {
+        "within_gaps": [
+          1,
+          5,
+          10,
+          20,
+          40,
+          80
+        ],
+        "within_segments": [
+          "cruise_line",
+          "diagonal"
+        ],
+        "cross_line_max_center_dist": 85.0,
+        "cross_line_stride": 2,
+        "crossing_max_center_dist": 60.0,
+        "extra_segments": {
+          "climb": [
+            5,
+            10
+          ],
+          "turn": [
+            5,
+            10
+          ]
+        }
+      },
+      "sources": {
+        "terra": {},
+        "terra_json": {},
+        "rtk_att0": {
+          "attitude_noise_deg": 0.0
+        },
+        "rtk": {
+          "attitude_noise_deg": 0.1
+        },
+        "noisy_rtk": {
+          "preset": "rtk"
+        },
+        "noisy_gnss": {
+          "preset": "gnss"
+        }
+      },
+      "sweep": {
+        "pos_sigma_m": [
+          0.02,
+          0.05,
+          0.1,
+          0.2,
+          0.5,
+          1.0
+        ],
+        "att_sigma_deg": 0.1
+      },
+      "refine": {
+        "sources": [
+          "terra",
+          "rtk",
+          "noisy_rtk",
+          "noisy_gnss",
+          "sweep"
+        ],
+        "max_matches_fit": 1500,
+        "loss": "soft_l1",
+        "f_scale_px": 1.0,
+        "min_matches": 40,
+        "water_classes": [
+          4,
+          5
+        ],
+        "water_max_fraction": 0.5,
+        "folds": 2
+      },
+      "healthy": {
+        "class_based": [
+          3,
+          19,
+          18,
+          1
+        ],
+        "error_max_abs": 0.15,
+        "unhealthy_error_min_abs": 0.5,
+        "min_texture": 6.0,
+        "vegetation": [
+          13,
+          14
+        ],
+        "vehicle_classes": [
+          20,
+          24
+        ],
+        "vehicle_mask_dilate_px": 9
+      },
+      "position_bins_px": [
+        0,
+        600,
+        1000,
+        1700
+      ]
+    }
+  },
+  "created": "2026-11-11T03:35:26",
+  "python": "3.12.3",
+  "platform": "Linux-7.0.0-42-generic-x86_64-with-glibc2.39",
+  "argv": [
+    "/home/edgar/Desktop/CC/src/aerodiag/cli/track_b.py",
+    "--data",
+    "configs/data_town_02.yaml"
+  ],
+  "versions": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "opencv": "5.0.0",
+    "open3d": "0.20.0"
+  }
+}

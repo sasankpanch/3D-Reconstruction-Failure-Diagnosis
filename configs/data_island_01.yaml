@@ -1,0 +1,46 @@
+# island flight 01 (same site / Terra model as configs/data_island.yaml; generated from it, only paths, scene and outputs differ)
+# Data configuration. All paths relative to `root`. Units: metres, seconds, pixels. Timestamps: int64 ns (Unix epoch).
+# Scene: HKisland_GNSS03 (same camera as HKairport_GNSS03). Scene-specific values below are re-checked by Phase 0.
+root: /home/edgar/Desktop/CC
+scene: HKisland_GNSS01
+paths:
+  calibration: calibration_results.py          # parsed with ast, never imported
+  cam_dir: data/island_01/interval1_HKisland_GNSS01/interval1_CAM
+  lidar_dir: data/island_01/interval1_HKisland_GNSS01/interval1_LIDAR
+  label_id_dir: data/island_01/interval1_HKisland_GNSS01_Labels/interval1_LIDAR_label_id
+  sampleinfos: data/island_01/interval1_HKisland_GNSS01/sampleinfos_interpolated.json
+  rtk_csv: data/island_01/interval1_HKisland_GNSS01/rtk_positions_raw.csv
+  terra_dir: data/terra/HKisland_GNSS
+  outputs: outputs/island_01
+camera:
+  model: calibration          # 'calibration' = K+dist from calibration file (Phase 0 F2); 'json' = P3x3, no distortion
+reference_poses:
+  frame_period_ns: 100000000  # 10 Hz; orig_idx = round((t - t0) / period)
+  keyframe_modulo: 5          # Terra-registered grid: orig_idx % 5 == 0  (Phase 0 F1)
+  anchor_tol_m: 0.001         # a frame is "interpolated" if within these tolerances of its neighbours' interpolation
+  anchor_tol_deg: 0.001
+  exclude_off_grid_anchors: true   # Q3: the 284 non-grid anchors (turns) are not reference
+segmentation:
+  hover_speed: 1.5            # m/s horizontal
+  vertical_speed: 1.0         # m/s -> climb/descent
+  heading_window_s: 3.0
+  heading_stable_deg: 8.0
+  line_min_duration_s: 6.0
+  line_min_speed: 5.0
+  parallel_tol_deg: 15.0
+  smooth_frames: 11
+rtk:
+  fit_segments_exclude: [hover, climb, descent]   # Phase 0 §7: fit on flight frames only
+  altitude_datum: "assumed WGS84 ellipsoidal (DJI default), UNVERIFIED (Q8)"
+classes:
+  dynamic: [20, 24]                 # sedan, truck
+  water: [4, 5]                     # river, pool
+  vehicle: [20, 24]                 # sedan, truck (LiDAR semantic classes; vehicle-head labels only)
+  healthy_class_based: [3, 2, 18, 19, 1]   # hard, flat, textured surfaces (noise floor)
+  paved: [3, 2, 18, 19]                # flat paved ground (height sanity checks)
+  vegetation: [13, 14]             # confound strata / reported separately
+  report_separately: [0, 13]        # background, green_field (mostly forest)  (Q6)
+
+# Terra <-> LiDAR alignment is unreliable on this scene (88 stable cells): heads whose labels depend on it are not
+# trained or reported. Water uses the LiDAR semantic class only and is kept.
+heads_exclude: [failure, layered]

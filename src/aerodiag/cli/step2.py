@@ -71,7 +71,7 @@ def _sweep_worker(pid):
     gpu = None
     if _W.get("use_cuda"):
         from ..signals.sweep_gpu import GpuSweep
-        gpu = GpuSweep(cam, img1, img2)
+        gpu = GpuSweep(cam, img1, img2, precision=cfg["sweep"].get("cuda_precision", "float32"))
     outs = []; ch = cfg["sweep"].get("cuda_chunk_cells", 4000) if gpu is not None else cfg["sweep"]["chunk_cells"]
     for s0 in range(0, len(idx), ch):
         k = idx[s0:s0 + ch]
@@ -158,7 +158,7 @@ class Step2:
         from ..config import config_hash
         import hashlib
         pose_sig = hashlib.sha1(np.round(self.T[:, :3, 3], 4).tobytes()).hexdigest()[:12]      # poses enter the cache key
-        sweep_cfg = {k: v for k, v in self.cfg["sweep"].items() if k not in ("workers", "backend", "cuda_workers", "cuda_chunk_cells", "chunk_cells")}
+        sweep_cfg = {k: v for k, v in self.cfg["sweep"].items() if k not in ("workers", "backend", "cuda_workers", "cuda_chunk_cells", "chunk_cells", "cuda_precision")}
         key = config_hash(dict(sweep=sweep_cfg, pairs=self.cfg["pairs"], terrain=self.cfg["terrain"], n_pairs=len(self.Tp), poses=pose_sig))
         done = self.out / "cell_pair_signals.parquet"; tag = self.out / "cell_pair_signals.hash"
         if done.exists() and tag.exists() and tag.read_text() == key:
@@ -174,18 +174,22 @@ class Step2:
         _W.update(ds=self.ds, cam=self.cam, Tp=self.Tp, P=P, cells=self.cells, sun=sun, cfg=self.cfg, use_cuda=use_cuda)
         self.res["sweep_backend"] = dict(backend="cuda" if use_cuda else "cpu", workers=workers)
         log(f"sweeping {len(P)} pairs over {len(self.cells['id'])} candidate cells ({'cuda' if use_cuda else 'cpu'}, {workers} workers)")
-        parts = []; t0 = time.time()
+        import pyarrow as pa, pyarrow.parquet as pq
+        tmp = done.with_suffix(".parquet.tmp"); writer = None; t0 = time.time(); stats = dict(rows=0, valid=0); cells_seen = set(); pairs_seen = set()
+        Pj = P[["pair_type", "gap_frames", "dt_s", "heading_diff_deg", "baseline_m", "i", "j"]]
         from multiprocessing.pool import ThreadPool                     # CUDA: threads share this process's GPU context
         with (ThreadPool(workers) if use_cuda else Pool(workers)) as p:
             for k, (pid, df) in enumerate(p.imap_unordered(_sweep_worker, P.index.tolist(), chunksize=1)):
-                if df is not None:
-                    parts.append(df)
+                if df is not None:                                       # stream to disk (bounded memory on large flights)
+                    df = df.join(Pj, on="pair_id"); tbl = pa.Table.from_pandas(df, preserve_index=False)
+                    if writer is None:
+                        writer = pq.ParquetWriter(tmp, tbl.schema)
+                    writer.write_table(tbl.cast(writer.schema)); stats["rows"] += len(df); stats["valid"] += int(df.cost_min.notna().sum())
+                    cells_seen.update(np.unique(df.cell_id).tolist()); pairs_seen.add(int(pid))
                 if k % 50 == 0:
                     log(f"  {k}/{len(P)} pairs ({time.time() - t0:.0f}s)")
-        S = pd.concat(parts, ignore_index=True)
-        S = S.join(P[["pair_type", "gap_frames", "dt_s", "heading_diff_deg", "baseline_m", "i", "j"]], on="pair_id")
-        S.to_parquet(done, index=False); tag.write_text(key); self.res["sweep_seconds"] = float(time.time() - t0)
-        self.res["sweep"] = dict(pairs=int(S.pair_id.nunique()), rows=int(len(S)), valid_rows=int(S.cost_min.notna().sum()), cells=int(S.cell_id.nunique()))
+        writer.close(); tmp.replace(done); tag.write_text(key); self.res["sweep_seconds"] = float(time.time() - t0)
+        self.res["sweep"] = dict(pairs=len(pairs_seen), rows=stats["rows"], valid_rows=stats["valid"], cells=len(cells_seen))
         log("sweep:", self.res["sweep"])
 
     def save(self):

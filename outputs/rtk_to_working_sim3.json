@@ -31,8 +31,11 @@
     "yaw_deg": -0.6905539836490435
   },
   "fit_frames": 397,
-  "residual_median_m": 1.3111599447362683,
-  "residual_p95_m": 2.8709969499114956,
-  "source_frame": "local ENU at Terra metadata origin; RTK alt as ellipsoidal height (assumed, Q8)",
+  "fit_excluded_segments": [
+    "hover",
+    "climb",
+    "descent"
+  ],
+  "source_frame": "local ENU at Terra metadata origin (lat0, lon0, h0), RTK alt as ellipsoidal height (Q8, unverified)",
   "target_frame": "Terra working frame"
 }

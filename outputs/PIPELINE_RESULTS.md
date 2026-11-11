@@ -23,8 +23,8 @@ Label (Terra − LiDAR) on reliable-GT cells, by class (m):
 source          noisy_gnss+ref    rtk  rtk+ref  terra  terra+ref
 pairs                                                           
 climb:10                  4.37   6.23     0.42   0.53       0.42
-climb:5                  12.20   5.78     0.42   0.54       0.42
-cross_line                5.35  41.50     3.49  15.77       1.26
+climb:5                  12.19   5.78     0.42   0.54       0.42
+cross_line                5.35  41.49     3.50  15.77       1.26
 crossing                 11.02  59.67     3.83  16.30       1.59
 turn:10                   6.69  10.44     0.80   3.45       0.79
 turn:5                    7.27   7.87     0.70   2.28       0.67
@@ -44,40 +44,40 @@ pos_sigma_m
 0.02               1.27      1.58            0.61            0.70            0.87           0.56            1.10
 0.05               1.27      1.65            0.84            0.85            0.92           0.83            1.12
 0.10               1.38      1.84            1.34            1.21            1.10           1.40            1.16
-0.20               1.76      2.68            2.46            2.04            1.54           2.65            1.26
+0.20               1.75      2.68            2.46            2.04            1.54           2.65            1.26
 0.50               3.45      5.83            6.11            4.75            3.24           5.46            1.81
-1.00               4.91     11.37           11.07            9.51            6.30           9.11            3.02
+1.00               4.92     11.37           11.07            9.51            6.30           9.11            3.02
 ```
 
 ## 3. Step 2: epipolar search and signals
 
-Sweep: {'pairs': 781, 'rows': 14024030, 'valid_rows': 13774497, 'cells': 105516}. Global height offset vs LiDAR: -0.499 m (removed below).
+Sweep: {'pairs': 781, 'rows': 14023899, 'valid_rows': 13774369, 'cells': 105516}. Global height offset vs LiDAR: -0.499 m (removed below).
 
 Height from the 1-D search vs LiDAR on flat paved cells:
 
 | grp | n | abs_dz_p50 | abs_dz_p90 | predicted_sigma_z | px_per_m |
 |---|---|---|---|---|---|
-| cross_line | 51020.000 | 8.929 | 37.025 | 0.038 | 13.161 |
-| crossing | 49529.000 | 3.120 | 11.270 | 0.074 | 6.759 |
+| cross_line | 51017.000 | 8.931 | 37.063 | 0.038 | 13.161 |
+| crossing | 49529.000 | 3.120 | 11.269 | 0.074 | 6.759 |
 | within:1 | 160906.000 | 1.220 | 9.841 | 2.702 | 0.185 |
 | within:10 | 132911.000 | 0.447 | 9.421 | 0.275 | 1.817 |
-| within:20 | 108146.000 | 0.373 | 7.009 | 0.139 | 3.609 |
-| within:40 | 76200.000 | 0.410 | 2.260 | 0.070 | 7.186 |
+| within:20 | 108146.000 | 0.373 | 7.008 | 0.139 | 3.609 |
+| within:40 | 76200.000 | 0.410 | 2.261 | 0.070 | 7.186 |
 | within:5 | 146684.000 | 0.537 | 9.577 | 0.545 | 0.917 |
-| within:80 | 36545.000 | 0.627 | 9.747 | 0.035 | 14.146 |
+| within:80 | 36545.000 | 0.627 | 9.758 | 0.035 | 14.146 |
 
 Plane-sweep across residual on flat paved cells (px):
 
 | grp | n | p50 | p90 | p99 |
 |---|---|---|---|---|
-| cross_line | 48339.000 | 0.838 | 2.942 | 5.137 |
-| crossing | 47514.000 | 0.857 | 2.802 | 5.106 |
-| within:1 | 160868.000 | 0.121 | 0.329 | 0.693 |
-| within:10 | 132087.000 | 0.175 | 0.599 | 3.036 |
-| within:20 | 106471.000 | 0.206 | 0.741 | 3.590 |
-| within:40 | 75412.000 | 0.257 | 0.973 | 3.631 |
-| within:5 | 146321.000 | 0.158 | 0.497 | 1.853 |
-| within:80 | 35343.000 | 0.344 | 1.577 | 4.533 |
+| cross_line | 48335 | 0.838 | 2.956 | 5.139 |
+| crossing | 47513 | 0.857 | 2.802 | 5.106 |
+| within:1 | 160869 | 0.121 | 0.329 | 0.693 |
+| within:10 | 132088 | 0.175 | 0.599 | 3.037 |
+| within:20 | 106474 | 0.206 | 0.741 | 3.589 |
+| within:40 | 75416 | 0.257 | 0.974 | 3.632 |
+| within:5 | 146321 | 0.158 | 0.497 | 1.850 |
+| within:80 | 35343 | 0.344 | 1.576 | 4.538 |
 
 Signals by class (within-line gaps 5–40):
 
@@ -89,40 +89,40 @@ Signals by class (within-line gaps 5–40):
 | wild_field | 296157 | 0.011 | 0.157 | 0.078 | 0.129 | 0.090 | 0.010 | 0.181 |
 | paved_motor_road | 274582 | 0.042 | 0.224 | 0.071 | 0.079 | 0.178 | 0.022 | 0.170 |
 | none | 176895 | 0.016 | 0.263 | 0.144 | 0.134 | 0.250 | 0.024 | 0.226 |
-| container | 92924 | 0.146 | 0.226 | 0.046 | 0.076 | 0.196 | 0.026 | 0.170 |
-| dirt_motor_road | 91247 | 0.017 | 0.219 | 0.084 | 0.107 | 0.136 | 0.015 | 0.302 |
+| container | 92924 | 0.146 | 0.226 | 0.046 | 0.076 | 0.197 | 0.026 | 0.170 |
+| dirt_motor_road | 91246 | 0.017 | 0.219 | 0.084 | 0.107 | 0.136 | 0.015 | 0.302 |
 | car_park | 48908 | 0.056 | 0.249 | 0.042 | 0.129 | 0.090 | 0.007 | 0.078 |
-| roof | 24624 | 0.557 | 0.296 | 0.057 | 0.057 | 0.419 | 0.059 | 0.154 |
+| roof | 24624 | 0.557 | 0.292 | 0.057 | 0.059 | 0.422 | 0.059 | 0.148 |
 | traffic_barrier | 6046 | 0.011 | 0.245 | 0.057 | 0.065 | 0.234 | 0.033 | 0.094 |
 | umbrella | 2885 | 0.021 | 0.241 | 0.021 | 0.048 | 0.195 | 0.026 | 0.079 |
 
-Glint: {'sun_azimuth_deg': [240.51500692212414, 241.08078101668764], 'sun_elevation_deg': [28.743119124886007, 29.466563375133866], 'cells_glint_gt_0_5': 16884, 'specular_deg_min': 0.020012924447655678}
+Glint: {'sun_azimuth_deg': [240.51500692212414, 241.08078101668764], 'sun_elevation_deg': [28.743119124886007, 29.466563375133866], 'cells_glint_gt_0_5': 16884, 'specular_deg_min': 0.020013023167848587}
 
 ## 4. Step 3: diagnosis (spatial 5-fold CV, 25 m blocks; 95% CI by block bootstrap)
 
 | head | n | positives | base_rate | auroc | auroc_ci95 | ap | ap_ci95 | recall_at_5pct_fpr | brier |
 |---|---|---|---|---|---|---|---|---|---|
-| failure | 10095 | 2206 | 0.219 | 0.934 | [0.900, 0.959] | 0.755 | [0.705, 0.803] | 0.607 | 0.095 |
-| layered | 48239 | 42950 | 0.890 | 0.968 | [0.950, 0.979] | 0.995 | [0.993, 0.997] | 0.849 | 0.058 |
-| vehicle | 105236 | 221 | 0.002 | 0.914 | [0.826, 0.989] | 0.051 | [0.010, 0.159] | 0.647 | 0.026 |
+| failure | 10095 | 2206 | 0.219 | 0.933 | [0.899, 0.959] | 0.755 | [0.703, 0.804] | 0.611 | 0.095 |
+| layered | 48239 | 42950 | 0.890 | 0.968 | [0.950, 0.979] | 0.995 | [0.993, 0.997] | 0.847 | 0.058 |
+| vehicle | 105236 | 221 | 0.002 | 0.909 | [0.817, 0.986] | 0.047 | [0.009, 0.160] | 0.602 | 0.027 |
 
 ### Head `failure`: model vs baselines
 
 | model | auroc | auroc_ci95 | ap | recall_at_5pct_fpr |
 |---|---|---|---|---|
-| full classifier | 0.934 | [0.900, 0.959] | 0.755 | 0.607 |
+| full classifier | 0.933 | [0.899, 0.959] | 0.755 | 0.611 |
 | baseline: low_texture (textureless_frac) | 0.519 | [0.486, 0.551] | 0.228 | 0.030 |
-| baseline: photometric (long 1-NCC p50) | 0.863 | [0.834, 0.891] | 0.583 | 0.366 |
-| baseline: across (long |across| p50) | 0.787 | [0.739, 0.840] | 0.435 | 0.164 |
+| baseline: photometric (long 1-NCC p50) | 0.863 | [0.834, 0.891] | 0.588 | 0.367 |
+| baseline: across (long |across| p50) | 0.788 | [0.741, 0.840] | 0.437 | 0.164 |
 | baseline: across (short |across| p50) | 0.626 | [0.572, 0.690] | 0.279 | 0.061 |
-| baseline: flat cost curve (-sharpness, long) | 0.633 | [0.558, 0.703] | 0.291 | 0.086 |
-| baseline: below-terrain fraction | 0.767 | [0.720, 0.816] | 0.507 | 0.300 |
+| baseline: flat cost curve (-sharpness, long) | 0.634 | [0.559, 0.704] | 0.292 | 0.086 |
+| baseline: below-terrain fraction | 0.768 | [0.722, 0.816] | 0.509 | 0.305 |
 | baseline: coverage (-n_valid) | 0.553 | [0.445, 0.655] | 0.260 | 0.070 |
-| baseline: repetitive (periodic_frac) | 0.623 | [0.576, 0.664] | 0.292 | 0.074 |
+| baseline: repetitive (periodic_frac) | 0.621 | [0.573, 0.662] | 0.291 | 0.073 |
 | physics score: featureless | 0.519 | [0.488, 0.551] | 0.229 | 0.037 |
-| physics score: repetitive | 0.623 | [0.576, 0.664] | 0.292 | 0.074 |
-| physics score: moving | 0.360 | [0.299, 0.428] | 0.166 | 0.000 |
-| physics score: reflective | 0.522 | [0.491, 0.553] | 0.227 | 0.000 |
+| physics score: repetitive | 0.621 | [0.573, 0.662] | 0.291 | 0.073 |
+| physics score: moving | 0.363 | [0.301, 0.431] | 0.167 | 0.000 |
+| physics score: reflective | 0.521 | [0.491, 0.552] | 0.227 | 0.000 |
 | physics score: glint_geometric_only | 0.568 | [0.490, 0.635] | 0.311 | 0.150 |
 | physics score: weak_geometry | 0.500 | [0.500, 0.501] | 0.219 | 0.000 |
 | physics score: hidden_layered_physics | 0.807 | [0.764, 0.845] | 0.447 | 0.000 |
@@ -131,19 +131,19 @@ Glint: {'sun_azimuth_deg': [240.51500692212414, 241.08078101668764], 'sun_elevat
 
 | model | auroc | auroc_ci95 | ap | recall_at_5pct_fpr |
 |---|---|---|---|---|
-| full classifier | 0.968 | [0.950, 0.979] | 0.995 | 0.849 |
-| baseline: low_texture (textureless_frac) | 0.454 | [0.412, 0.488] | 0.866 | 0.003 |
-| baseline: photometric (long 1-NCC p50) | 0.883 | [0.853, 0.902] | 0.979 | 0.481 |
+| full classifier | 0.968 | [0.950, 0.979] | 0.995 | 0.847 |
+| baseline: low_texture (textureless_frac) | 0.453 | [0.412, 0.488] | 0.866 | 0.003 |
+| baseline: photometric (long 1-NCC p50) | 0.883 | [0.853, 0.902] | 0.979 | 0.482 |
 | baseline: across (long |across| p50) | 0.791 | [0.727, 0.851] | 0.954 | 0.134 |
 | baseline: across (short |across| p50) | 0.626 | [0.584, 0.670] | 0.922 | 0.090 |
 | baseline: flat cost curve (-sharpness, long) | 0.669 | [0.599, 0.736] | 0.924 | 0.052 |
 | baseline: below-terrain fraction | 0.783 | [0.701, 0.828] | 0.957 | 0.194 |
 | baseline: coverage (-n_valid) | 0.417 | [0.334, 0.510] | 0.871 | 0.022 |
-| baseline: repetitive (periodic_frac) | 0.592 | [0.543, 0.642] | 0.906 | 0.041 |
-| physics score: featureless | 0.454 | [0.412, 0.489] | 0.868 | 0.010 |
-| physics score: repetitive | 0.592 | [0.543, 0.642] | 0.906 | 0.041 |
-| physics score: moving | 0.475 | [0.428, 0.519] | 0.881 | 0.000 |
-| physics score: reflective | 0.611 | [0.562, 0.656] | 0.916 | 0.000 |
+| baseline: repetitive (periodic_frac) | 0.592 | [0.543, 0.641] | 0.906 | 0.040 |
+| physics score: featureless | 0.454 | [0.412, 0.488] | 0.868 | 0.010 |
+| physics score: repetitive | 0.592 | [0.543, 0.641] | 0.906 | 0.040 |
+| physics score: moving | 0.477 | [0.430, 0.519] | 0.881 | 0.000 |
+| physics score: reflective | 0.611 | [0.563, 0.655] | 0.916 | 0.000 |
 | physics score: glint_geometric_only | 0.589 | [0.515, 0.659] | 0.932 | 0.240 |
 | physics score: weak_geometry | 0.500 | [0.497, 0.502] | 0.891 | 0.003 |
 | physics score: hidden_layered_physics | 0.823 | [0.777, 0.852] | 0.961 | 0.000 |
@@ -152,19 +152,19 @@ Glint: {'sun_azimuth_deg': [240.51500692212414, 241.08078101668764], 'sun_elevat
 
 | model | auroc | auroc_ci95 | ap | recall_at_5pct_fpr |
 |---|---|---|---|---|
-| full classifier | 0.914 | [0.826, 0.989] | 0.051 | 0.647 |
+| full classifier | 0.909 | [0.817, 0.986] | 0.047 | 0.602 |
 | baseline: low_texture (textureless_frac) | 0.555 | [0.471, 0.669] | 0.004 | 0.154 |
-| baseline: photometric (long 1-NCC p50) | 0.268 | [0.201, 0.358] | 0.001 | 0.009 |
-| baseline: across (long |across| p50) | 0.629 | [0.541, 0.707] | 0.003 | 0.090 |
-| baseline: across (short |across| p50) | 0.589 | [0.525, 0.676] | 0.004 | 0.113 |
-| baseline: flat cost curve (-sharpness, long) | 0.610 | [0.550, 0.739] | 0.003 | 0.090 |
-| baseline: below-terrain fraction | 0.244 | [0.195, 0.308] | 0.001 | 0.000 |
+| baseline: photometric (long 1-NCC p50) | 0.267 | [0.201, 0.358] | 0.001 | 0.005 |
+| baseline: across (long |across| p50) | 0.627 | [0.538, 0.703] | 0.003 | 0.090 |
+| baseline: across (short |across| p50) | 0.588 | [0.525, 0.675] | 0.004 | 0.113 |
+| baseline: flat cost curve (-sharpness, long) | 0.607 | [0.550, 0.732] | 0.003 | 0.090 |
+| baseline: below-terrain fraction | 0.246 | [0.194, 0.315] | 0.001 | 0.000 |
 | baseline: coverage (-n_valid) | 0.345 | [0.130, 0.635] | 0.002 | 0.005 |
-| baseline: repetitive (periodic_frac) | 0.488 | [0.352, 0.744] | 0.003 | 0.072 |
+| baseline: repetitive (periodic_frac) | 0.487 | [0.351, 0.738] | 0.003 | 0.068 |
 | physics score: featureless | 0.553 | [0.468, 0.663] | 0.003 | 0.154 |
-| physics score: repetitive | 0.488 | [0.352, 0.744] | 0.003 | 0.072 |
-| physics score: moving | 0.627 | [0.495, 0.719] | 0.003 | 0.000 |
-| physics score: reflective | 0.558 | [0.466, 0.626] | 0.002 | 0.000 |
+| physics score: repetitive | 0.487 | [0.351, 0.738] | 0.003 | 0.068 |
+| physics score: moving | 0.621 | [0.489, 0.717] | 0.003 | 0.000 |
+| physics score: reflective | 0.559 | [0.470, 0.627] | 0.002 | 0.000 |
 | physics score: glint_geometric_only | 0.674 | [0.463, 0.892] | 0.004 | 0.109 |
 | physics score: weak_geometry | 0.495 | [0.492, 0.499] | 0.002 | 0.000 |
 | physics score: hidden_layered_physics | 0.427 | [0.365, 0.497] | 0.002 | 0.000 |
@@ -173,19 +173,19 @@ Glint: {'sun_azimuth_deg': [240.51500692212414, 241.08078101668764], 'sun_elevat
 
 | stratum | n | positives | base_rate | auroc | auroc_ci95 | ap | recall_at_5pct_fpr |
 |---|---|---|---|---|---|---|---|
-| vegetation | 4957 | 1644 | 0.332 | 0.918 | [0.848, 0.954] | 0.776 | 0.412 |
-| non-vegetation | 5138 | 562 | 0.109 | 0.892 | [0.779, 0.959] | 0.640 | 0.623 |
-| hard surfaces | 1899 | 8 | 0.004 | 0.960 | [0.900, 0.982] | 0.079 | 0.625 |
-| background | 2410 | 480 | 0.199 | 0.910 | [0.863, 0.947] | 0.740 | 0.652 |
+| vegetation | 4957 | 1644 | 0.332 | 0.918 | [0.848, 0.954] | 0.776 | 0.407 |
+| non-vegetation | 5138 | 562 | 0.109 | 0.886 | [0.767, 0.956] | 0.637 | 0.625 |
+| hard surfaces | 1899 | 8 | 0.004 | 0.958 | [0.893, 0.985] | 0.080 | 0.625 |
+| background | 2410 | 480 | 0.199 | 0.907 | [0.856, 0.944] | 0.739 | 0.648 |
 | BASELINE: semantic class only (vegetation indicator from LiDAR labels) | 10095 | 2206 | 0.219 | 0.663 | [0.568, 0.747] | 0.303 | 0.000 |
 
 ### Signal-group ablation (AUROC when the group is removed; delta vs full)
 
 | ablation | failure_auroc | failure_delta | layered_auroc | layered_delta | water_auroc | water_delta |
 |---|---|---|---|---|---|---|
-| without_across | 0.936 | 0.002 | 0.968 | 0.000 | — | — |
-| without_curve | 0.925 | -0.009 | 0.967 | -0.001 | — | — |
-| without_photometric | 0.931 | -0.003 | 0.956 | -0.012 | — | — |
-| without_height | 0.936 | 0.002 | 0.968 | 0.001 | — | — |
-| without_glint | 0.932 | -0.002 | 0.967 | -0.000 | — | — |
-| without_coverage/texture | 0.939 | 0.005 | 0.968 | 0.000 | — | — |
+| without_across | 0.935 | 0.002 | 0.968 | 0.000 | — | — |
+| without_curve | 0.925 | -0.008 | 0.967 | -0.001 | — | — |
+| without_photometric | 0.931 | -0.002 | 0.956 | -0.012 | — | — |
+| without_height | 0.935 | 0.002 | 0.968 | 0.000 | — | — |
+| without_glint | 0.931 | -0.002 | 0.967 | -0.000 | — | — |
+| without_coverage/texture | 0.939 | 0.006 | 0.968 | 0.000 | — | — |

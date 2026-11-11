@@ -5,12 +5,12 @@ root: /home/edgar/Desktop/CC
 scene: AMtown03
 paths:
   calibration: calibration_results.py          # parsed with ast, never imported
-  cam_dir: data/town/interval1_AMtown03/interval1_CAM
-  lidar_dir: data/town/interval1_AMtown03/interval1_LIDAR
-  label_id_dir: data/town/interval1_AMtown03_Labels/interval1_LIDAR_label_id
-  sampleinfos: data/town/interval1_AMtown03/sampleinfos_interpolated.json
-  rtk_csv: data/town/interval1_AMtown03/rtk_positions_raw.csv
-  terra_dir: data/town/AMtown
+  cam_dir: data/town_03/interval1_AMtown03/interval1_CAM
+  lidar_dir: data/town_03/interval1_AMtown03/interval1_LIDAR
+  label_id_dir: data/town_03/interval1_AMtown03_Labels/interval1_LIDAR_label_id
+  sampleinfos: data/town_03/interval1_AMtown03/sampleinfos_interpolated.json
+  rtk_csv: data/town_03/interval1_AMtown03/rtk_positions_raw.csv
+  terra_dir: data/terra/AMtown
   outputs: outputs/town_lo
 camera:
   # The AMtown_calibration distortion does not fit these images (across-epipolar p90 5.0 px on held-out cruise lines).

@@ -69,39 +69,27 @@ python -m venv .venv && .venv/bin/pip install -e .
 ```
 
 **Compute backend.** `AERODIAG_BACKEND=auto` (default) runs every onboard stage and the step-3 training on the GPU
-through PyTorch when one is available; `cpu` forces the numpy/OpenCV reference code. Each CUDA path is an exact port of
-its CPU reference and is checked against it in `tests/` (agreement to float rounding):
+through PyTorch when one is available; `cpu` forces the numpy/OpenCV reference code. Each CUDA path is a port of its
+CPU reference and is checked against it in `tests/` (agreement to float rounding; the sweep correlates >= 0.99 per
+signal on real pairs):
 
-| Stage | GPU (CUDA) | CPU only (reason) |
+| Stage | GPU (CUDA) | CPU |
 |---|---|---|
-| Track B / step 2 matching | descriptor 2-NN + ratio + mutual, local-consistency filter | homography outlier filter (one small MAGSAC call per pair) |
-| Step 2 poses | batched rotation-only refinement (all pairs in one solve), undistortion | — |
-| Step 2 sweep | projection, sampling, NCC, across search | cost-curve shape (small per-cell arrays) |
+| Features | optional Kornia SIFT (`features_type: sift_cuda`) | OpenCV SIFT (default; on Jetson it runs on the ARM cores in parallel with the GPU) |
+| Matching | 2-NN + ratio + mutual, local-consistency filter | homography outlier filter (one small MAGSAC call per pair) |
+| Step 2 poses | batched rotation-only refinement, undistortion | coarse terrain grid (milliseconds) |
+| Step 2 sweep | everything: projection, sampling, NCC, cost-curve shape, across search, glint | — |
 | Step 3 | accumulation, motion / view fits, logistic regression, boosted trees, conformal head, bootstrap CIs | pandas bookkeeping, plots |
-| Features | optional Kornia SIFT (`features_type: sift_cuda`; 5x faster, equal results on airport, but half the matches on opposite-heading cross-line pairs, so not yet the default) | OpenCV SIFT (default, reference) |
 | Track A | — | LiDAR / Terra ground truth (evaluation only, never onboard) |
 
-Airport, RTX 5080 vs 12-core CPU: step 2 45 min → 5.3 min, step 3 45 min → 49 s; Track B + step 2 + step 3 end to end in under 8 min.
+Onboard benchmark (`aerodiag-bench`, airport, RTX 5080 vs one Ryzen 9 9900X worker): sweep 5.4 s → 0.17 s per pair
+(21.6k cells), matching 112 → 8 ms per pair, accumulation 4.2 → 0.09 s per million rows; one survey image (5 pairs)
+≈ 1.0 s on the GPU vs 28 s on one CPU core, with SIFT (0.6 s) running in parallel on the CPU. Per-stage wall-clock
+times of a full run: `<outputs>/timings.csv` (`./scripts_run_scene.sh <cfg> --fresh`).
 
-Data: download the UAVScenes sequences (images, LiDAR, LiDAR labels, `sampleinfos_interpolated.json`,
-`rtk_positions_raw.csv`, DJI Terra model) and `calibration_results.py`, and place them as
-
-```
-data/airport/{interval1_HKairport_GNSS03, interval1_HKairport_GNSS03_Labels, HKairport_GNSS_Terra}
-data/island/{interval1_HKisland_GNSS03,  interval1_HKisland_GNSS03_Labels,  HKisland_GNSS}
-data/town/{interval1_AMtown03,           interval1_AMtown03_Labels,          AMtown}
-```
-
-Set `root:` in `configs/data*.yaml` to your checkout, then run one scene end to end:
-
-```bash
-./scripts_run_scene.sh configs/data.yaml          # airport
-./scripts_run_scene.sh configs/data_town.yaml
-./scripts_run_scene.sh configs/data_island.yaml
-.venv/bin/python -m aerodiag.cli.transfer --scenes configs/data.yaml configs/data_town.yaml
-```
-
-Large intermediates (LiDAR maps, matches, per-pair signals) are cached under `outputs/**/cache` and are not tracked.
+GPU SIFT note: heading-normalised extraction (`features_rotate`) was tested and does not change match counts (Kornia
+already estimates orientation); with 8k keypoints Kornia finds fewer matches on wide-baseline pairs (40-80 frame gaps),
+16k keypoints roughly matches OpenCV's 8k.
 
 **AMtown03 camera:** the distortion coefficients in `calibration_results.py` do not fit these images (across-epipolar
 p90 5.0 px on held-out cruise lines). `configs/data_town.yaml` uses distortion re-estimated from onboard data only

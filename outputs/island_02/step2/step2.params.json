@@ -1,0 +1,179 @@
+{
+  "params": {
+    "data": {
+      "root": "/home/edgar/Desktop/CC",
+      "scene": "HKisland_GNSS02",
+      "paths": {
+        "calibration": "calibration_results.py",
+        "cam_dir": "data/island_02/interval1_HKisland_GNSS02/interval1_CAM",
+        "lidar_dir": "data/island_02/interval1_HKisland_GNSS02/interval1_LIDAR",
+        "label_id_dir": "data/island_02/interval1_HKisland_GNSS02_Labels/interval1_LIDAR_label_id",
+        "sampleinfos": "data/island_02/interval1_HKisland_GNSS02/sampleinfos_interpolated.json",
+        "rtk_csv": "data/island_02/interval1_HKisland_GNSS02/rtk_positions_raw.csv",
+        "terra_dir": "data/terra/HKisland_GNSS",
+        "outputs": "outputs/island_02"
+      },
+      "camera": {
+        "model": "calibration"
+      },
+      "reference_poses": {
+        "frame_period_ns": 100000000,
+        "keyframe_modulo": 5,
+        "anchor_tol_m": 0.001,
+        "anchor_tol_deg": 0.001,
+        "exclude_off_grid_anchors": true
+      },
+      "segmentation": {
+        "hover_speed": 1.5,
+        "vertical_speed": 1.0,
+        "heading_window_s": 3.0,
+        "heading_stable_deg": 8.0,
+        "line_min_duration_s": 6.0,
+        "line_min_speed": 5.0,
+        "parallel_tol_deg": 15.0,
+        "smooth_frames": 11
+      },
+      "rtk": {
+        "fit_segments_exclude": [
+          "hover",
+          "climb",
+          "descent"
+        ],
+        "altitude_datum": "assumed WGS84 ellipsoidal (DJI default), UNVERIFIED (Q8)"
+      },
+      "classes": {
+        "dynamic": [
+          20,
+          24
+        ],
+        "water": [
+          4,
+          5
+        ],
+        "vehicle": [
+          20,
+          24
+        ],
+        "healthy_class_based": [
+          3,
+          2,
+          18,
+          19,
+          1
+        ],
+        "paved": [
+          3,
+          2,
+          18,
+          19
+        ],
+        "vegetation": [
+          13,
+          14
+        ],
+        "report_separately": [
+          0,
+          13
+        ]
+      },
+      "heads_exclude": [
+        "failure",
+        "layered"
+      ]
+    },
+    "step2": {
+      "seed": 0,
+      "features": {
+        "type": "rootsift",
+        "max_features": 8000,
+        "texture_window": 21,
+        "workers": 12
+      },
+      "matching": {
+        "ratio": 0.8,
+        "mutual": true,
+        "local_k": 12,
+        "local_tol_px": 12.0,
+        "local_tol_mad": 4.0,
+        "max_matches_per_pair": 3000,
+        "min_matches": 40
+      },
+      "pairs": {
+        "types": [
+          "within_line",
+          "cross_line",
+          "crossing"
+        ],
+        "within_base_stride": 2,
+        "within_gaps": [
+          1,
+          5,
+          10,
+          20,
+          40,
+          80
+        ],
+        "within_segments": [
+          "cruise_line",
+          "diagonal"
+        ],
+        "cross_line_max_center_dist": 85.0,
+        "cross_line_stride": 2,
+        "crossing_max_center_dist": 60.0,
+        "extra_segments": {}
+      },
+      "bundle": {
+        "max_tracks": 80000,
+        "rounds": 6
+      },
+      "terrain": {
+        "min_gap_frames": 20,
+        "coarse_cell_m": 5.0,
+        "min_points": 3,
+        "smooth_cells": 0.7,
+        "max_extrapolation_m": 10.0
+      },
+      "grid": {
+        "cell_m": 1.0
+      },
+      "sweep": {
+        "patch_half_m": 0.6,
+        "patch_samples": 7,
+        "n_hyp_half": 48,
+        "step_px": 1.0,
+        "range_m": 20.0,
+        "min_ref_std": 2.0,
+        "minima_delta": 0.1,
+        "minima_min_sep": 2,
+        "periodic_cv": 0.25,
+        "across_range_px": 6,
+        "sigma_match_px": 0.5,
+        "below_k_sigma": 3.0,
+        "below_tol_m": 0.5,
+        "glint_sigma_deg": 5.0,
+        "margin_px": 60,
+        "chunk_cells": 500,
+        "cell_stride": 1,
+        "workers": 12,
+        "backend": "auto",
+        "cuda_workers": 4,
+        "cuda_chunk_cells": 4000,
+        "cuda_precision": "float32"
+      }
+    }
+  },
+  "created": "2026-11-11T03:21:27",
+  "python": "3.12.3",
+  "platform": "Linux-7.0.0-42-generic-x86_64-with-glibc2.39",
+  "argv": [
+    "/home/edgar/Desktop/CC/src/aerodiag/cli/step2.py",
+    "--data",
+    "configs/data_island_02.yaml"
+  ],
+  "versions": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "opencv": "5.0.0",
+    "open3d": "0.20.0"
+  }
+}

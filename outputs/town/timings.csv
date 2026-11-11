@@ -1,0 +1,9 @@
+stage,seconds,backend,gpu,cpu,fresh
+phase0,1.251147784,auto,NVIDIA GeForce RTX 5080,AMD Ryzen 9 9900X 12-Core Processor,no
+track_a,90.883755028,auto,NVIDIA GeForce RTX 5080,AMD Ryzen 9 9900X 12-Core Processor,no
+track_b,132.982552789,auto,NVIDIA GeForce RTX 5080,AMD Ryzen 9 9900X 12-Core Processor,no
+step2,56.885554935,auto,NVIDIA GeForce RTX 5080,AMD Ryzen 9 9900X 12-Core Processor,no
+step3,113.859827872,auto,NVIDIA GeForce RTX 5080,AMD Ryzen 9 9900X 12-Core Processor,no
+calibrate_logreg,1.313971275,auto,NVIDIA GeForce RTX 5080,AMD Ryzen 9 9900X 12-Core Processor,no
+calibrate_gbdt,1.144375771,auto,NVIDIA GeForce RTX 5080,AMD Ryzen 9 9900X 12-Core Processor,no
+summary,.240821801,auto,NVIDIA GeForce RTX 5080,AMD Ryzen 9 9900X 12-Core Processor,no

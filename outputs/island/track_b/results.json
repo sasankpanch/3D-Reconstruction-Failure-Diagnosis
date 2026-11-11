@@ -1,7 +1,7 @@
 {
   "geometry": {
-    "n_matches": 2124254,
-    "frac_with_cell": 0.9505487573519927,
+    "n_matches": 2124369,
+    "frac_with_cell": 0.9505514343317946,
     "n_vehicle_matches": 737,
     "max_water_fraction": 0.4688093300786547
   },
@@ -299,15 +299,15 @@
     "counts": {
       "healthy_a": 32272,
       "healthy_b": 63228,
-      "unhealthy_b": 252483,
+      "unhealthy_b": 252481,
       "vehicle": 737,
-      "vegetation": 1559036
+      "vegetation": 1559030
     },
     "cells": {
       "healthy_a": 597,
       "healthy_b": 858,
       "unhealthy_b": 5846,
-      "vegetation": 24478
+      "vegetation": 24480
     },
     "separability_key": [
       {
@@ -694,7 +694,7 @@
         "cells_healthy_b": 699,
         "cells_unhealthy_b": 4652,
         "cells_healthy_a": 505,
-        "healthy_b_cell_p50": 1.294,
+        "healthy_b_cell_p50": 1.304,
         "healthy_b_cell_p95": 5.34,
         "unhealthy_b_cell_p50": 1.940999984741211,
         "auroc_b": 0.62,
@@ -710,7 +710,7 @@
         "cells_healthy_a": 521,
         "healthy_b_cell_p50": 3.149,
         "healthy_b_cell_p95": 6.031,
-        "unhealthy_b_cell_p50": 3.132999897003174,
+        "unhealthy_b_cell_p50": 3.13100004196167,
         "auroc_b": 0.477,
         "auroc_unhealthy_vs_healthy_a": 0.53,
         "detect_at_5pct_fpr": 0.038,

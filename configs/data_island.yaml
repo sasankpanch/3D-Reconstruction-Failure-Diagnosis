@@ -4,12 +4,12 @@ root: /home/edgar/Desktop/CC
 scene: HKisland_GNSS03
 paths:
   calibration: calibration_results.py          # parsed with ast, never imported
-  cam_dir: data/island/interval1_HKisland_GNSS03/interval1_CAM
-  lidar_dir: data/island/interval1_HKisland_GNSS03/interval1_LIDAR
-  label_id_dir: data/island/interval1_HKisland_GNSS03_Labels/interval1_LIDAR_label_id
-  sampleinfos: data/island/interval1_HKisland_GNSS03/sampleinfos_interpolated.json
-  rtk_csv: data/island/interval1_HKisland_GNSS03/rtk_positions_raw.csv
-  terra_dir: data/island/HKisland_GNSS
+  cam_dir: data/island_03/interval1_HKisland_GNSS03/interval1_CAM
+  lidar_dir: data/island_03/interval1_HKisland_GNSS03/interval1_LIDAR
+  label_id_dir: data/island_03/interval1_HKisland_GNSS03_Labels/interval1_LIDAR_label_id
+  sampleinfos: data/island_03/interval1_HKisland_GNSS03/sampleinfos_interpolated.json
+  rtk_csv: data/island_03/interval1_HKisland_GNSS03/rtk_positions_raw.csv
+  terra_dir: data/terra/HKisland_GNSS
   outputs: outputs/island
 camera:
   model: calibration          # 'calibration' = K+dist from calibration file (Phase 0 F2); 'json' = P3x3, no distortion

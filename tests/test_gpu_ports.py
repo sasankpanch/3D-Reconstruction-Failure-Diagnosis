@@ -57,3 +57,25 @@ def test_batched_rotation_refinement_matches_scipy():
     cpu = [refine_rotation(*it, 1450.0, rng=np.random.default_rng(p)) for p, it in enumerate(items)]
     gpu = refine_rotation_batch(items, 1450.0, rngs=[np.random.default_rng(p) for p in range(6)])
     assert max(np.degrees(np.linalg.norm(a[0] - b[0])) for a, b in zip(cpu, gpu)) < 1e-5
+
+def test_curve_shape_cuda_matches_numpy():
+    from aerodiag.signals.sweep import curve_shape
+    from aerodiag.signals.sweep_gpu import _curve_shape_t
+    r = np.random.default_rng(4); n, K = 3000, 97; x = np.arange(K)
+    cost = 0.5 + 0.3 * np.sin(x[None, :] / r.uniform(1.5, 6, (n, 1)) + r.uniform(0, 6, (n, 1))) + r.normal(0, 0.02, (n, K))
+    cost[r.uniform(size=(n, K)) < 0.03] = np.nan; cost[:20] = np.nan; step = r.uniform(0.5, 2, n)
+    a = curve_shape(cost, step, 0.1, 2, 0.25)
+    b = {k: v.cpu().numpy() for k, v in _curve_shape_t(torch.as_tensor(cost, device="cuda"), torch.as_tensor(step, device="cuda"), 0.1, 2, 0.25).items()}
+    for k in ["k_best", "n_minima", "periodic", "at_boundary"]:
+        assert np.array_equal(a[k], b[k]), k
+    for k in ["k_off", "cost_min", "sharpness", "flatness", "period_px"]:
+        assert np.allclose(a[k], b[k], equal_nan=True, atol=1e-9), k
+
+def test_rot90_keypoint_mapping_exact():
+    from aerodiag.matching.features import rot90_points
+    H, W = 5, 7; img = np.arange(H * W).reshape(H, W)
+    for k in range(4):
+        r = np.rot90(img, k)
+        for x, y in [(2, 1), (6, 4), (0, 0), (3, 2)]:
+            yy, xx = np.argwhere(r == img[y, x])[0]
+            assert np.allclose(rot90_points(np.array([[xx, yy]], float), k, W, H)[0], [x, y])

@@ -24,6 +24,17 @@ from ..diagnosis.magnitude import magnitude_cv
 def log(*a):
     print(time.strftime("%H:%M:%S"), *a, flush=True)
 
+def read_columns(path, cols):
+    """Low-memory parquet read: one column at a time into numpy (peak ~ final frame + one column); strings become
+    categoricals; Arrow's pool is released after each column."""
+    import pyarrow as pa, pyarrow.parquet as pq
+    out = {}
+    for c in cols:
+        t = pq.read_table(path, columns=[c])[c]
+        out[c] = pd.Categorical(t.to_pandas()) if pa.types.is_string(t.type) or pa.types.is_large_string(t.type) else t.to_numpy()
+        del t; pa.default_memory_pool().release_unused()
+    return pd.DataFrame(out)
+
 def vehicle_cells(ds, grid, frames):
     """Count sedan/truck LiDAR points per cell (Terra keyframe poses) - label construction only (comparison side)."""
     cnt = np.zeros(grid.n)
@@ -38,19 +49,27 @@ def main(argv=None):
     ap.add_argument("--data", default="configs/data.yaml"); ap.add_argument("--cfg", default="configs/step3.yaml"); a = ap.parse_args(argv)
     dcfg, cfg = load_config(a.data), load_config(a.cfg); ds = Dataset(dcfg); out = Path(ds.out) / "step3"; out.mkdir(parents=True, exist_ok=True)
     grid = GroundGrid.from_json((Path(ds.out) / "track_a" / "grid.json").read_text()); res = {}
-    S = pd.read_parquet(Path(ds.out) / "step2" / "cell_pair_signals.parquet")
+    S = read_columns(Path(ds.out) / "step2" / "cell_pair_signals.parquet",          # only the columns step 3 uses, one at a time
+                     ["cell_id", "i", "j", "pair_type", "gap_frames", "dt_s", "z_best", "across_px", "cost_min", "sharpness",
+                      "flatness", "gain", "contrast_ratio", "dz_sigma", "glint_risk", "baseline_m", "heading_diff_deg", "periodic",
+                      "n_minima", "below_terrain", "at_boundary", "ref_std"])
+    S["i"] = S.i.astype(np.int32); S["j"] = S.j.astype(np.int32)                     # pair_type is categorical (not 50-100M strings)
     # viewing-angle change per (cell, pair): rays from both camera centres (onboard rtk poses) to the cell point
     from .step2 import Step2
     st = Step2.__new__(Step2); st.ds = ds; st.dcfg = dcfg; st.cfg = load_config(Path(dcfg["root"]) / "configs" / "step2.yaml")
     from .track_b import TrackB
     tbo = TrackB.__new__(TrackB); tbo.ds = ds; tbo.cfg = load_config(Path(dcfg["root"]) / "configs" / "track_b.yaml"); tbo.dcfg = dcfg; tbo.results = {}
     T = tbo.build_sources()["rtk"].T_wc; C = T[:, :3, 3]
-    xy = grid.centers()[S.cell_id.values]; z = S.z_best.fillna(S.z_best.median()).values; X = np.c_[xy, z]
-    v1 = C[S.i.values] - X; v2 = C[S.j.values] - X
-    S["dtheta_deg"] = np.degrees(np.arccos(np.clip((v1 * v2).sum(1) / (np.linalg.norm(v1, axis=1) * np.linalg.norm(v2, axis=1)), -1, 1)))
+    centers = grid.centers(); zmed = float(np.nanmedian(S.z_best.values)); dth = np.empty(len(S), np.float32)
+    for a0 in range(0, len(S), 5_000_000):                                         # chunked: bounded memory on large flights
+        sl = slice(a0, a0 + 5_000_000); X = np.c_[centers[S.cell_id.values[sl]], np.nan_to_num(S.z_best.values[sl], nan=zmed)]
+        v1 = C[S.i.values[sl]] - X; v2 = C[S.j.values[sl]] - X
+        dth[sl] = np.degrees(np.arccos(np.clip((v1 * v2).sum(1) / (np.linalg.norm(v1, axis=1) * np.linalg.norm(v2, axis=1)), -1, 1)))
+    S["dtheta_deg"] = dth; del X, v1, v2
     log("accumulating", len(S), "rows")
     F = accumulate(S)
-    MR = fit_motion_reflectance(S, grid, cfg["motion"]["min_obs"], tuple(cfg["motion"]["pool_radii"]))
+    MR = fit_motion_reflectance(S[["cell_id", "dt_s", "dtheta_deg", "across_px", "cost_min", "gain"]], grid, cfg["motion"]["min_obs"], tuple(cfg["motion"]["pool_radii"]))
+    del S                                                                    # free the cell x pair table before modelling
     F = F.join(MR[["geo_bt", "geo_bth", "pho_bt", "pho_bth", "gain_bth", "moving_score", "reflective_score", "n_obs_fit", "pool_radius"]], how="left")
     F = F[F.n_pairs >= cfg["min_pairs"]]
     log("cells:", len(F))

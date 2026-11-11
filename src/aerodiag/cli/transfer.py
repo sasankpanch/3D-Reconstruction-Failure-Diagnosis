@@ -34,12 +34,14 @@ def main(argv=None):
     ap.add_argument("--heads", nargs="+", default=["failure", "layered", "vehicle"])
     ap.add_argument("--norms", nargs="+", default=["train", "own_rank"])
     ap.add_argument("--models", nargs="+", default=["logreg", "gbdt"])
+    ap.add_argument("--mode", default="pairs", choices=["pairs", "lofo"],
+                    help="pairs: train on one scene, test on another; lofo: leave one flight out (train on all others)")
     ap.add_argument("--cfg", default="configs/step3.yaml"); ap.add_argument("--out", default="outputs/transfer")
     a = ap.parse_args(argv); cfg = load_config(a.cfg); out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
     S = [load_scene(p) for p in a.scenes]; res = {}; rows = []
     common = sorted(set.intersection(*[set(c for c in s["F"].columns if c not in ("n_obs_fit", "pool_radius")) for s in S]))
     rank = lambda F: F[common].astype(float).replace([np.inf, -np.inf], np.nan).rank(pct=True)
-    for model_name in a.models:
+    for model_name in (a.models if a.mode == "pairs" else []):
      for norm in a.norms:
       for tr in S:
         for te in S:
@@ -67,7 +69,38 @@ def main(argv=None):
                                  auroc=met["auroc"], auroc_ci95=met["auroc_ci95"], ap=met["ap"], within_auroc=wi.get("auroc"), within_ap=wi.get("ap")))
                 log(key, "AUROC %.3f [%.3f, %.3f]  AP %.3f (base %.3f) | within-scene AUROC %s" % (
                     met["auroc"], *met["auroc_ci95"], met["ap"], met["base_rate"], None if wi.get("auroc") is None else round(wi["auroc"], 3)))
+    if a.mode == "lofo":                                                 # leave-one-flight-out (replaces the pairwise table)
+        rows, res = [], {}
+        site = lambda nm: "".join(ch for ch in nm if not ch.isdigit()).replace("_GNSS", "")
+        for model_name in a.models:
+            for norm in a.norms:
+                for te in S:
+                    for h in a.heads:
+                        trs = [tr for tr in S if tr is not te and h in tr["L"]]
+                        if h not in te["L"] or not trs:
+                            continue
+                        Ftr = pd.concat([rank(tr["F"]) if norm == "own_rank" else tr["F"][common] for tr in trs], ignore_index=True)
+                        ytr = np.concatenate([tr["L"][h].values for tr in trs]); m = np.isfinite(ytr)
+                        if (ytr[m] == 1).sum() < 30:
+                            continue
+                        Fte = rank(te["F"]) if norm == "own_rank" else te["F"]
+                        Xtr, cols, stats = prepare(Ftr, common); Xte, _, _ = prepare(Fte, cols, stats)
+                        if model_name == "gbdt":
+                            raw = lambda F_: F_[cols].astype(float).replace([np.inf, -np.inf], np.nan).values
+                            sc = predict_gbdt(fit_gbdt(raw(Ftr)[m], ytr[m], **cfg.get("gbdt", {})), raw(Fte))
+                        else:
+                            sc = predict(fit_logreg(Xtr[m], ytr[m], l2=cfg["cv"]["l2"]), Xte)
+                        yte = te["L"][h].values; met = full_metrics(yte, sc, blocks_of(te["xy"], cfg["cv"]["block_m"]), cfg["seed"])
+                        wi = (te["within_gbdt"] if model_name == "gbdt" else te["within"]).get(h, {})
+                        same = [tr["name"] for tr in trs if site(tr["name"]) == site(te["name"])]
+                        key = f"{model_name}:{norm}:LOFO -> {te['name']}:{h}"; res[key] = dict(transfer=met, within_scene_cv_on_test=wi, train=[tr["name"] for tr in trs])
+                        rows.append(dict(model=model_name, norm=norm, train=f"all others ({len(trs)}; {len(same)} same site)", test=te["name"], head=h,
+                                         n=met["n"], pos=met["positives"], base=met["base_rate"], auroc=met["auroc"], auroc_ci95=met["auroc_ci95"],
+                                         ap=met["ap"], within_auroc=wi.get("auroc"), within_ap=wi.get("ap")))
+                        log(key, "AUROC %.3f [%.3f, %.3f]" % (met["auroc"], *met["auroc_ci95"]))
     T = pd.DataFrame(rows)
+    if a.mode == "lofo":
+        out = out / "lofo"; out.mkdir(parents=True, exist_ok=True)
     (out / "results.json").write_text(json.dumps(res, indent=2, default=float))
     f = lambda v: f"{v:.3f}" if isinstance(v, float) else (f"[{v[0]:.2f}, {v[1]:.2f}]" if isinstance(v, (list, tuple)) else str(v))
     md = ["# Cross-scene transfer (train on one scene, test on another; no retraining)", "", f"Common features: {len(common)}", "",

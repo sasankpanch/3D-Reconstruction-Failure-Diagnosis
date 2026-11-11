@@ -150,11 +150,12 @@
         "workers": 12,
         "backend": "auto",
         "cuda_workers": 4,
-        "cuda_chunk_cells": 4000
+        "cuda_chunk_cells": 4000,
+        "cuda_precision": "float32"
       }
     }
   },
-  "created": "2026-11-11T00:52:14",
+  "created": "2026-11-11T02:17:09",
   "python": "3.12.3",
   "platform": "Linux-7.0.0-42-generic-x86_64-with-glibc2.39",
   "argv": [

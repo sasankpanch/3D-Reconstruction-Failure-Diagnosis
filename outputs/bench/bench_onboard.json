@@ -1,0 +1,34 @@
+{
+  "decode_s_per_image": 0.007924553501652554,
+  "sift_cpu_1thread_s_per_image": 0.6005353264918085,
+  "cpu": {
+    "matching_s_per_pair": 0.11245103701367043,
+    "refine_s_per_pair": 0.002682135032955557,
+    "sweep_s_per_pair": 5.448078134009847,
+    "sweep_cells_per_pair": 21599.0,
+    "sweep_s_per_1k_cells": 0.2499706177441502,
+    "accumulate_s_per_1M_rows": 4.243068298965227,
+    "inference_s_per_10k_cells": 0.09305481897899881,
+    "per_image_dataset_spacing_s": 12.527813807624323,
+    "pairs_per_image_dataset": 2.2253886010362693,
+    "per_image_survey_spacing_s": 27.963563312252518,
+    "sift_runs_in_parallel_on_cpu_s": 0.6005353264918085
+  },
+  "cuda": {
+    "matching_s_per_pair": 0.008161934005329385,
+    "refine_s_per_pair": 0.004005947790574282,
+    "sweep_s_per_pair": 0.1651348365121521,
+    "sweep_cells_per_pair": 21599.0,
+    "sweep_s_per_1k_cells": 0.007431207816726232,
+    "accumulate_s_per_1M_rows": 0.09232531097950414,
+    "inference_s_per_10k_cells": 0.04651841404847801,
+    "per_image_dataset_spacing_s": 0.47226962282986157,
+    "pairs_per_image_dataset": 2.2253886010362693,
+    "per_image_survey_spacing_s": 0.9642157661146484,
+    "sift_runs_in_parallel_on_cpu_s": 0.6005353264918085
+  },
+  "hardware": {
+    "gpu": "NVIDIA GeForce RTX 5080",
+    "cpu": "x86_64"
+  }
+}

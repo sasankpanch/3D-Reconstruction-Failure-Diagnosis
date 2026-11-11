@@ -1,0 +1,46 @@
+# town flight 01 (same site / Terra model as configs/data_town.yaml; generated from it, only paths, scene and outputs differ)
+# Data configuration (scene AMtown03: different drone/camera, AMtown_calibration). All paths relative to `root`. Units: metres, seconds, pixels. Timestamps: int64 ns (Unix epoch).
+root: /home/edgar/Desktop/CC
+scene: AMtown01
+paths:
+  calibration: calibration_results.py          # parsed with ast, never imported
+  cam_dir: data/town_01/interval1_AMtown01/interval1_CAM
+  lidar_dir: data/town_01/interval1_AMtown01/interval1_LIDAR
+  label_id_dir: data/town_01/interval1_AMtown01_Labels/interval1_LIDAR_label_id
+  sampleinfos: data/town_01/interval1_AMtown01/sampleinfos_interpolated.json
+  rtk_csv: data/town_01/interval1_AMtown01/rtk_positions_raw.csv
+  terra_dir: data/terra/AMtown
+  outputs: outputs/town_01
+camera:
+  # The AMtown_calibration distortion does not fit these images (across-epipolar p90 5.0 px on held-out cruise lines).
+  # dist_override: k1, k2, k3 estimated from ONBOARD data only (images + RTK, per-pair rotation-only refinement) on
+  # turn/climb/diagonal/crossing pairs, cruise lines held out (p90 0.84 px). K, p1, p2 from the file. No LiDAR, no Terra.
+  # Reproduce: .venv/bin/python src/aerodiag/calib/distortion_fit.py configs/data_town.yaml
+  dist_override: [-0.04158, 0.10776, 0.0016, 0.00013, -0.05414]
+  model: calibration          # 'calibration' = K+dist from calibration file (Phase 0 F2); 'json' = P3x3, no distortion
+reference_poses:
+  frame_period_ns: 100000000  # 10 Hz; orig_idx = round((t - t0) / period)
+  keyframe_modulo: 5          # Terra-registered grid: orig_idx % 5 == 0  (Phase 0 F1)
+  anchor_tol_m: 0.001         # a frame is "interpolated" if within these tolerances of its neighbours' interpolation
+  anchor_tol_deg: 0.001
+  exclude_off_grid_anchors: true   # Q3: the 284 non-grid anchors (turns) are not reference
+segmentation:
+  hover_speed: 1.5            # m/s horizontal
+  vertical_speed: 1.0         # m/s -> climb/descent
+  heading_window_s: 3.0
+  heading_stable_deg: 8.0
+  line_min_duration_s: 6.0
+  line_min_speed: 5.0
+  parallel_tol_deg: 15.0
+  smooth_frames: 11
+rtk:
+  fit_segments_exclude: [hover, climb, descent]   # Phase 0 §7: fit on flight frames only
+  altitude_datum: "assumed WGS84 ellipsoidal (DJI default), UNVERIFIED (Q8)"
+classes:
+  dynamic: [20, 24]                 # sedan, truck
+  water: [4, 5]                     # river, pool
+  vehicle: [20, 24]                 # sedan, truck (LiDAR semantic classes; vehicle-head labels only)
+  healthy_class_based: [3, 19, 18, 1]   # hard, flat, textured surfaces (noise floor)
+  paved: [3, 19, 18]                # flat paved ground (height sanity checks)
+  vegetation: [13, 14]             # confound strata / reported separately
+  report_separately: [0, 13]        # background, green_field (mostly forest)  (Q6)

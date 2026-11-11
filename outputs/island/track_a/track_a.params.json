@@ -5,12 +5,12 @@
       "scene": "HKisland_GNSS03",
       "paths": {
         "calibration": "calibration_results.py",
-        "cam_dir": "data/island/interval1_HKisland_GNSS03/interval1_CAM",
-        "lidar_dir": "data/island/interval1_HKisland_GNSS03/interval1_LIDAR",
-        "label_id_dir": "data/island/interval1_HKisland_GNSS03_Labels/interval1_LIDAR_label_id",
-        "sampleinfos": "data/island/interval1_HKisland_GNSS03/sampleinfos_interpolated.json",
-        "rtk_csv": "data/island/interval1_HKisland_GNSS03/rtk_positions_raw.csv",
-        "terra_dir": "data/island/HKisland_GNSS",
+        "cam_dir": "data/island_03/interval1_HKisland_GNSS03/interval1_CAM",
+        "lidar_dir": "data/island_03/interval1_HKisland_GNSS03/interval1_LIDAR",
+        "label_id_dir": "data/island_03/interval1_HKisland_GNSS03_Labels/interval1_LIDAR_label_id",
+        "sampleinfos": "data/island_03/interval1_HKisland_GNSS03/sampleinfos_interpolated.json",
+        "rtk_csv": "data/island_03/interval1_HKisland_GNSS03/rtk_positions_raw.csv",
+        "terra_dir": "data/terra/HKisland_GNSS",
         "outputs": "outputs/island"
       },
       "camera": {
@@ -50,6 +50,10 @@
           4,
           5
         ],
+        "vehicle": [
+          20,
+          24
+        ],
         "healthy_class_based": [
           3,
           2,
@@ -71,7 +75,11 @@
           0,
           13
         ]
-      }
+      },
+      "heads_exclude": [
+        "failure",
+        "layered"
+      ]
     },
     "track_a": {
       "seed": 0,
@@ -133,11 +141,11 @@
     },
     "n_reference_frames": 249
   },
-  "created": "2026-11-09T15:36:25",
+  "created": "2026-11-11T02:50:14",
   "python": "3.12.3",
   "platform": "Linux-7.0.0-42-generic-x86_64-with-glibc2.39",
   "argv": [
-    ".venv/bin/aerodiag-track-a",
+    "/home/edgar/Desktop/CC/src/aerodiag/cli/track_a.py",
     "--data",
     "configs/data_island.yaml"
   ],

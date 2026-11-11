@@ -5,12 +5,12 @@
       "scene": "HKairport_GNSS03",
       "paths": {
         "calibration": "calibration_results.py",
-        "cam_dir": "interval1_HKairport_GNSS03/interval1_CAM",
-        "lidar_dir": "interval1_HKairport_GNSS03/interval1_LIDAR",
-        "label_id_dir": "interval1_HKairport_GNSS03_Labels/interval1_LIDAR_label_id",
-        "sampleinfos": "interval1_HKairport_GNSS03/sampleinfos_interpolated.json",
-        "rtk_csv": "interval1_HKairport_GNSS03/rtk_positions_raw.csv",
-        "terra_dir": "HKairport_GNSS_Terra",
+        "cam_dir": "data/airport/interval1_HKairport_GNSS03/interval1_CAM",
+        "lidar_dir": "data/airport/interval1_HKairport_GNSS03/interval1_LIDAR",
+        "label_id_dir": "data/airport/interval1_HKairport_GNSS03_Labels/interval1_LIDAR_label_id",
+        "sampleinfos": "data/airport/interval1_HKairport_GNSS03/sampleinfos_interpolated.json",
+        "rtk_csv": "data/airport/interval1_HKairport_GNSS03/rtk_positions_raw.csv",
+        "terra_dir": "data/airport/HKairport_GNSS_Terra",
         "outputs": "outputs"
       },
       "camera": {
@@ -50,11 +50,23 @@
           4,
           5
         ],
+        "vehicle": [
+          20,
+          24
+        ],
         "healthy_class_based": [
           10,
           3,
           18,
           1
+        ],
+        "paved": [
+          10,
+          3,
+          18
+        ],
+        "vegetation": [
+          13
         ],
         "report_separately": [
           0,
@@ -179,11 +191,13 @@
       ]
     }
   },
-  "created": "2026-11-08T07:32:32",
+  "created": "2026-11-11T02:14:42",
   "python": "3.12.3",
   "platform": "Linux-7.0.0-42-generic-x86_64-with-glibc2.39",
   "argv": [
-    ".venv/bin/aerodiag-track-b"
+    "/home/edgar/Desktop/CC/src/aerodiag/cli/track_b.py",
+    "--data",
+    "configs/data.yaml"
   ],
   "versions": {
     "numpy": "2.5.4",

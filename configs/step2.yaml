@@ -37,3 +37,4 @@ sweep:
   backend: auto                   # auto = cuda if PyTorch + GPU are available, else cpu (same arithmetic, see sweep_gpu.py)
   cuda_workers: 4                 # processes sharing the GPU (CPU-side bookkeeping runs in parallel)
   cuda_chunk_cells: 4000
+  cuda_precision: float32         # sweep projection geometry on the GPU (float64 = bit-level reference, much slower on GeForce / Jetson)

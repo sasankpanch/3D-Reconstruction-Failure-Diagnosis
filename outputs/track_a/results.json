@@ -857,5 +857,9 @@
     "cells_no_gt": 41324,
     "cells_gt": 94581,
     "cells_gt_without_terra": 89
+  },
+  "lidar_image_dt_ms": {
+    "median": 0.0,
+    "max_abs": 0.0
   }
 }

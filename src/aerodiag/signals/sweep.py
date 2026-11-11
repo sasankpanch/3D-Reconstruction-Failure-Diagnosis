@@ -81,6 +81,9 @@ def sweep_pair(img1, img2, cam, R1, c1, R2, c2, xy, z0, normals, sun, cfg, gpu=N
     """All signals for cells (xy, z0) for one pair. Returns dict of per-cell arrays (NaN where invalid).
     gpu: optional signals.sweep_gpu.GpuSweep holding both images on the GPU; the projection / sampling / NCC of all
     hypotheses then run on CUDA (same arithmetic, exact bilinear sampling)."""
+    if gpu is not None:                                                  # fully-GPU path (signals.sweep_gpu.sweep_pair_cuda)
+        from .sweep_gpu import sweep_pair_cuda
+        return sweep_pair_cuda(gpu, R1, c1, R2, c2, xy, z0, normals, sun, cfg)
     smp = (lambda which, uv: gpu.sample(which, uv)) if gpu is not None else (lambda which, uv: _sample(img1 if which == 0 else img2, uv))
     h, n_s, K2 = cfg["patch_half_m"], cfg["patch_samples"], cfg["n_hyp_half"]
     o = np.linspace(-h, h, n_s); dx, dy = [a.ravel() for a in np.meshgrid(o, o)]

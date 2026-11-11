@@ -51,8 +51,26 @@ class Groups:
             out.append(torch.where(n > 0, val, torch.full_like(val, float("nan"))))
         return torch.stack(out, 1)
 
-def accumulate(S: pd.DataFrame) -> pd.DataFrame:
-    t = lambda c: torch.as_tensor(np.asarray(S[c].values, np.float64), device=DEV)
+def accumulate(S: pd.DataFrame, max_rows=12_000_000) -> pd.DataFrame:
+    """Large flights are processed in chunks of whole cells (cells are independent, so results are identical)."""
+    if len(S) <= max_rows:
+        return _accumulate(S)
+    need = ["cell_id", "pair_type", "gap_frames"] + sorted(set(PER_CLASS) | {"cost_min", "gain", "glint_risk", "baseline_m", "heading_diff_deg",
+                                                                          "periodic", "n_minima", "below_terrain", "at_boundary", "ref_std"})
+    cid = S.cell_id.values; order = np.argsort(cid, kind="stable"); sc = cid[order]
+    bounds = np.searchsorted(sc, np.unique(sc)[::max(1, int(np.ceil(len(np.unique(sc)) * max_rows / len(S))))])
+    bounds = np.r_[bounds, len(sc)]; out = []
+    for a, b in zip(bounds[:-1], bounds[1:]):
+        if b > a:
+            out.append(_accumulate(S.iloc[order[a:b]][need]))
+    F = pd.concat(out).sort_index(); F.index.name = "cell_id"
+    order = list(out[0].columns[: out[0].columns.get_loc("glint_gain_excess") + 1])
+    for b in ["short", "mid", "long", "cross"]:
+        order += [f"{b}_n"] + [f"{b}_{k}_p{q}" for k in PER_CLASS for q in (50, 90)]
+    return F[[c for c in order if c in F.columns]]
+
+def _accumulate(S: pd.DataFrame) -> pd.DataFrame:
+    t = lambda c: torch.as_tensor(np.ascontiguousarray(S[c].values, dtype=np.float32), device=DEV).double()   # float64 on the GPU
     G = Groups(S.cell_id.values); idx = pd.Index(G.cells, name="cell_id")
     bcls = baseline_class(S.pair_type, S.gap_frames); cols = {k: (t(k).abs() if k in ABS else t(k)) for k in set(PER_CLASS) | {"cost_min", "gain"}}
     for k in ("glint_risk", "baseline_m", "heading_diff_deg", "periodic", "n_minima", "below_terrain", "at_boundary", "ref_std"):

@@ -5,12 +5,12 @@ root: /home/edgar/Desktop/CC
 scene: HKairport_GNSS03
 paths:
   calibration: calibration_results.py          # parsed with ast, never imported
-  cam_dir: data/airport/interval1_HKairport_GNSS03/interval1_CAM
-  lidar_dir: data/airport/interval1_HKairport_GNSS03/interval1_LIDAR
-  label_id_dir: data/airport/interval1_HKairport_GNSS03_Labels/interval1_LIDAR_label_id
-  sampleinfos: data/airport/interval1_HKairport_GNSS03/sampleinfos_interpolated.json
-  rtk_csv: data/airport/interval1_HKairport_GNSS03/rtk_positions_raw.csv
-  terra_dir: data/airport/HKairport_GNSS_Terra
+  cam_dir: data/airport_03/interval1_HKairport_GNSS03/interval1_CAM
+  lidar_dir: data/airport_03/interval1_HKairport_GNSS03/interval1_LIDAR
+  label_id_dir: data/airport_03/interval1_HKairport_GNSS03_Labels/interval1_LIDAR_label_id
+  sampleinfos: data/airport_03/interval1_HKairport_GNSS03/sampleinfos_interpolated.json
+  rtk_csv: data/airport_03/interval1_HKairport_GNSS03/rtk_positions_raw.csv
+  terra_dir: data/terra/HKairport_GNSS_Terra
   outputs: outputs/gpufeat
 camera:
   model: calibration          # 'calibration' = K+dist from calibration file (Phase 0 F2); 'json' = P3x3, no distortion

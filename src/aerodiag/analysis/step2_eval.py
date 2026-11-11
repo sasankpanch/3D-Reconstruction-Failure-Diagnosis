@@ -11,12 +11,26 @@ from .plots import heatmap, SEQ, CAT, _style
 
 def evaluate(st) -> dict:
     out = st.out; res = {}; g = st.grid
-    S = pd.read_parquet(out / "cell_pair_signals.parquet")
-    S["grp"] = np.where(S.pair_type == "within_line", "within:" + S.gap_frames.astype(str), S.pair_type)
+    cols = ["cell_id", "pair_id", "pair_type", "gap_frames", "z_best", "sigma_z", "px_per_m", "across_px", "cost_min", "sharpness",
+            "flatness", "gain", "contrast_ratio", "dz_sigma", "n_minima", "periodic", "below_terrain", "at_boundary", "glint_risk", "specular_deg"]
+    import pyarrow.parquet as pq, pyarrow.compute as pc
+    T = pq.read_table(out / "cell_pair_signals.parquet", columns=cols)               # only what is used (memory: large flights)
+    k = int(np.ceil(T.num_rows / 15_000_000))                                          # descriptive stats: every k-th pair if > 15M rows
+    if k > 1:
+        import pyarrow as pa
+        T = T.filter(pa.array(T["pair_id"].to_numpy() % k == 0))
+    res["eval_pair_subsample_every"] = k; S = T.to_pandas(); del T
+    # group labels as categoricals (32-80M rows: string columns would cost several GB)
+    pt = S.pair_type.astype("category"); within = (pt == "within_line").values
+    key = np.where(within, S.gap_frames.values.astype(np.int64), -1 - pt.cat.codes.values.astype(np.int64)); uk, inv = np.unique(key, return_inverse=True)
+    names = [f"within:{k}" if k >= 0 else str(pt.cat.categories[-1 - k]) for k in uk]
+    S["grp"] = pd.Categorical.from_codes(inv, categories=names); S = S.drop(columns=["pair_type"])
     L = pd.read_parquet(Path(st.ds.out) / "track_a" / "labels.parquet").set_index("cell_id")
     for c in ["lidar_z", "dominant_class", "gt_good", "error", "no_gt", "lidar_spread", "lidar_slope"]:
         S[c] = L[c].reindex(S.cell_id).values
-    S["cls"] = S.dominant_class.map(lambda c: CMAP.get(int(c), "none") if np.isfinite(c) else "none")
+    dcv = S.dominant_class.values; ud, dinv = np.unique(np.nan_to_num(dcv, nan=-1), return_inverse=True)
+    cnames = [CMAP.get(int(c), "none") if c >= 0 else "none" for c in ud]; ucn = sorted(set(cnames))
+    S["cls"] = pd.Categorical.from_codes(np.array([ucn.index(n) for n in cnames])[dinv], categories=ucn)
     S["dz_lidar"] = S.z_best - S.lidar_z
     paved = S.dominant_class.isin(st.dcfg["classes"]["paved"]) & (S.lidar_spread < 0.15) & (S.lidar_slope < 0.15)
     # 1. height from the 1D search vs LiDAR on flat paved cells (global median offset reported, then removed)
@@ -26,12 +40,12 @@ def evaluate(st) -> dict:
         e = d.dz_lidar - off
         return pd.Series(dict(n=len(d), dz_median=e.median(), abs_dz_p50=e.abs().median(), abs_dz_p90=e.abs().quantile(.9),
                               predicted_sigma_z=d.sigma_z.median(), px_per_m=d.px_per_m.median()))
-    H = S[paved & S.dz_lidar.notna()].groupby("grp").apply(hstats, include_groups=False); H.to_csv(out / "eval_height_vs_lidar.csv")
+    H = S[paved & S.dz_lidar.notna()].groupby("grp", observed=True).apply(hstats, include_groups=False); H.to_csv(out / "eval_height_vs_lidar.csv")
     res["height_vs_lidar"] = H.round(3).reset_index().to_dict("records")
     # 2. signals by class (within-line gaps 5-40)
-    W = S[S.grp.isin(["within:5", "within:10", "within:20", "within:40"])]
+    W = S[S.grp.isin(["within:5", "within:10", "within:20", "within:40"])].copy(); W["grp"] = W.grp.astype(str)
     rows = []
-    for c, d in W.groupby("cls"):
+    for c, d in W.groupby("cls", observed=True):
         if len(d) < 500:
             continue
         v = d.dropna(subset=["cost_min"]); r = dict(cls=c, rows=len(d), textureless_frac=float(d.cost_min.isna().mean()))
@@ -42,10 +56,10 @@ def evaluate(st) -> dict:
         rows.append(r)
     C = pd.DataFrame(rows).sort_values("rows", ascending=False); C.to_csv(out / "eval_signals_by_class.csv", index=False)
     res["signals_by_class"] = C.round(4).to_dict("records")
-    A = S[paved].groupby("grp").across_px.agg(n="count", p50=lambda s: s.abs().median(), p90=lambda s: s.abs().quantile(.9),
+    A = S[paved].groupby("grp", observed=True).across_px.agg(n="count", p50=lambda s: s.abs().median(), p90=lambda s: s.abs().quantile(.9),
                                                p99=lambda s: s.abs().quantile(.99))
     A.to_csv(out / "eval_across_noise_floor_paved.csv"); res["across_noise_floor_paved"] = A.round(3).reset_index().to_dict("records")
-    R = S.dropna(subset=["cost_min"]).groupby("grp")[["below_terrain", "periodic", "at_boundary"]].mean(); R.to_csv(out / "eval_flag_rates_by_pairs.csv")
+    R = S.dropna(subset=["cost_min"]).groupby("grp", observed=True)[["below_terrain", "periodic", "at_boundary"]].mean(); R.to_csv(out / "eval_flag_rates_by_pairs.csv")
     res["flag_rates_by_pairs"] = R.round(4).reset_index().to_dict("records")
     # 3. per-cell medians (within-line 5-40) and descriptive association with |Terra error| on gt_good cells
     agg = dict(across=("across_px", lambda s: s.abs().median()), cost=("cost_min", "median"), sharp=("sharpness", "median"),

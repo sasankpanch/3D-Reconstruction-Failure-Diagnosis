@@ -5,12 +5,12 @@
       "scene": "HKairport_GNSS03",
       "paths": {
         "calibration": "calibration_results.py",
-        "cam_dir": "data/airport/interval1_HKairport_GNSS03/interval1_CAM",
-        "lidar_dir": "data/airport/interval1_HKairport_GNSS03/interval1_LIDAR",
-        "label_id_dir": "data/airport/interval1_HKairport_GNSS03_Labels/interval1_LIDAR_label_id",
-        "sampleinfos": "data/airport/interval1_HKairport_GNSS03/sampleinfos_interpolated.json",
-        "rtk_csv": "data/airport/interval1_HKairport_GNSS03/rtk_positions_raw.csv",
-        "terra_dir": "data/airport/HKairport_GNSS_Terra",
+        "cam_dir": "data/airport_03/interval1_HKairport_GNSS03/interval1_CAM",
+        "lidar_dir": "data/airport_03/interval1_HKairport_GNSS03/interval1_LIDAR",
+        "label_id_dir": "data/airport_03/interval1_HKairport_GNSS03_Labels/interval1_LIDAR_label_id",
+        "sampleinfos": "data/airport_03/interval1_HKairport_GNSS03/sampleinfos_interpolated.json",
+        "rtk_csv": "data/airport_03/interval1_HKairport_GNSS03/rtk_positions_raw.csv",
+        "terra_dir": "data/terra/HKairport_GNSS_Terra",
         "outputs": "outputs"
       },
       "camera": {
@@ -125,7 +125,7 @@
       }
     }
   },
-  "created": "2026-11-11T00:53:35",
+  "created": "2026-11-11T03:48:19",
   "python": "3.12.3",
   "platform": "Linux-7.0.0-42-generic-x86_64-with-glibc2.39",
   "argv": [

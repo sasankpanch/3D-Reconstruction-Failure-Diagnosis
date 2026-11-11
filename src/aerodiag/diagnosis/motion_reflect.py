@@ -30,10 +30,12 @@ def _cell_fit(cell, X, y, n_cells):
 def fit_motion_reflectance(S: pd.DataFrame, grid, min_obs=6, pool_radii=(1, 2)):
     """S: cell x pair rows with columns cell_id, dt_s, dtheta_deg, across_px, cost_min, gain.
     Returns per-cell fit table indexed by cell_id (only cells with own observations)."""
-    S = S.dropna(subset=["across_px", "cost_min", "gain", "dtheta_deg"])
-    own = S.cell_id.values.astype(np.int64); cells, own_n = np.unique(own, return_counts=True)
+    keep = S[["across_px", "cost_min", "gain", "dtheta_deg"]].notna().all(1).values          # numpy views, float32 (memory)
+    V = {c: np.ascontiguousarray(S[c].values[keep], dtype=np.float32) for c in ("dt_s", "dtheta_deg", "across_px", "cost_min", "gain")}
+    own = S.cell_id.values[keep].astype(np.int64); n_rows = len(own); del keep
+    own_ = own; cells, own_n = np.unique(own, return_counts=True)
     iy, ix = np.divmod(own, grid.nx)
-    borrow_cell, borrow_src = [own], [np.arange(len(S))]
+    borrow_cell, borrow_src = [own], [np.arange(n_rows)]
     radius = pd.Series(0, index=cells); have = pd.Series(own_n, index=cells)
     for r in pool_radii:
         needy = have.index[have.values < min_obs].values
@@ -53,9 +55,9 @@ def fit_motion_reflectance(S: pd.DataFrame, grid, min_obs=6, pool_radii=(1, 2)):
     cell_all = np.concatenate(borrow_cell); src = np.concatenate(borrow_src)
     keep = np.isin(cell_all, cells); cell_all, src = cell_all[keep], src[keep]
     cid, cinv = np.unique(cell_all, return_inverse=True)
-    D = S.iloc[src]; X = np.c_[np.ones(len(D)), D.dt_s.values, D.dtheta_deg.values]
+    X = np.c_[np.ones(len(src)), V["dt_s"][src], V["dtheta_deg"][src]]
     out = pd.DataFrame(index=pd.Index(cid, name="cell_id"))
-    for name, y in [("geo", D.across_px.abs().values), ("pho", D.cost_min.values), ("gain", D.gain.abs().values)]:
+    for name, y in [("geo", np.abs(V["across_px"][src]).astype(np.float64)), ("pho", V["cost_min"][src].astype(np.float64)), ("gain", np.abs(V["gain"][src]).astype(np.float64))]:
         coef, tst, n = _cell_fit(cinv, X, y, len(cid))
         out[f"{name}_a"] = coef[:, 0]; out[f"{name}_bt"] = coef[:, 1]; out[f"{name}_bth"] = coef[:, 2]
         out[f"{name}_t_dt"] = tst[:, 1]; out[f"{name}_t_dth"] = tst[:, 2]
