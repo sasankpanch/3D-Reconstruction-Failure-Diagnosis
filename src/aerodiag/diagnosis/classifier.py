@@ -33,18 +33,19 @@ def auroc(y, s):
         return np.nan
     r = pd.Series(s).rank().values; return float((r[y == 1].sum() - n1 * (n1 + 1) / 2) / (n1 * n0))
 
-def spatial_cv(F, X, labels: pd.DataFrame, xy, block_m=25.0, folds=5, seed=0, **kw):
+def spatial_cv(F, X, labels: pd.DataFrame, xy, block_m=25.0, folds=5, seed=0, fit=None, pred=None, **kw):
     """Blocked K-fold CV. Returns out-of-fold probabilities (cells x labels) and per-label metrics."""
     blk = (np.floor(xy[:, 0] / block_m).astype(int) * 100003 + np.floor(xy[:, 1] / block_m).astype(int))
     ub = np.unique(blk); rng = np.random.default_rng(seed); fold_of = dict(zip(ub, rng.integers(0, folds, len(ub)))); fold = np.array([fold_of[b] for b in blk])
     oof = pd.DataFrame(np.nan, index=F.index, columns=labels.columns); metrics = {}
+    fit = fit or fit_logreg; pred = pred or predict
     for lab in labels.columns:
         y = labels[lab].values; m = np.isfinite(y)
         for k in range(folds):
             tr = m & (fold != k); te = m & (fold == k)
             if tr.sum() < 20 or (y[tr] == 1).sum() < 5:
                 continue
-            oof.loc[te, lab] = predict(fit_logreg(X[tr], y[tr], **kw), X[te])
+            oof.loc[te, lab] = pred(fit(X[tr], y[tr], **kw), X[te])
         mm = m & oof[lab].notna().values
         metrics[lab] = dict(n=int(mm.sum()), positives=int((y[mm] == 1).sum()), auroc=auroc(y[mm], oof[lab].values[mm]),
                             base_rate=float(np.mean(y[mm] == 1)) if mm.any() else np.nan)

@@ -17,6 +17,9 @@ from ..grid.ground_grid import GroundGrid
 from ..diagnosis.accumulate import accumulate
 from ..diagnosis.motion_reflect import fit_motion_reflectance
 from ..diagnosis.classifier import prepare, spatial_cv, fit_logreg, predict, auroc, full_metrics, blocks_of
+from ..diagnosis.gbdt import fit_gbdt, predict_gbdt
+from ..diagnosis.context import add_context
+from ..diagnosis.magnitude import magnitude_cv
 
 def log(*a):
     print(time.strftime("%H:%M:%S"), *a, flush=True)
@@ -25,7 +28,7 @@ def vehicle_cells(ds, grid, frames):
     """Count sedan/truck LiDAR points per cell (Terra keyframe poses) - label construction only (comparison side)."""
     cnt = np.zeros(grid.n)
     for i in frames:
-        lab = ds.load_labels(i); m = np.isin(lab, [20, 24])
+        lab = ds.load_labels(i); m = np.isin(lab, ds.cfg["classes"].get("vehicle", [20, 24]))
         if m.any():
             X = ds.lidar_world(i)[m]; c = grid.cell_id(X[:, :2]); np.add.at(cnt, c[c >= 0], 1)
     return cnt
@@ -57,7 +60,10 @@ def main(argv=None):
     sc["featureless"] = np.clip(F.textureless_frac.fillna(1) + (F.ref_std_med.fillna(0) < pc["low_texture_std"]).astype(float) * 0.5, 0, 1)
     sc["repetitive"] = np.clip(F.periodic_frac.fillna(0) / pc["periodic_frac_full"], 0, 1)
     sc["moving"] = np.clip(F.moving_score.fillna(0) / pc["t_full"], 0, 1)
-    sc["reflective"] = np.clip(np.fmax(F.reflective_score.fillna(0) / pc["t_full"], F.glint_max.fillna(0)), 0, 1)
+    # glint counts only when confirmed photometrically (brightness jump in the near-specular view), not on geometry alone
+    glint_conf = F.glint_max.fillna(0) * np.clip(F.glint_gain_excess.fillna(0) / pc.get("glint_gain_full", 0.2), 0, 1)
+    sc["reflective"] = np.clip(np.fmax(F.reflective_score.fillna(0) / pc["t_full"], glint_conf), 0, 1)
+    sc["glint_geometric_only"] = F.glint_max.fillna(0)
     sc["weak_geometry"] = np.clip(1 - np.minimum(F.max_baseline_m.fillna(0) / pc["good_baseline_m"], 1) * np.minimum(F.n_valid / pc["good_n_pairs"], 1), 0, 1)
     sc["hidden_layered_physics"] = np.clip(np.fmax(F.long_cost_min_p50.fillna(0) - F.short_cost_min_p50.fillna(0), 0) / pc["layer_cost_jump"], 0, 1)
     # ---- proxy labels (comparison side) for trained heads
@@ -74,28 +80,44 @@ def main(argv=None):
     wc = dcfg["classes"]["water"]; dom = L.dominant_class; frac = L.dominant_frac
     lab["water"] = np.where(dom.isin(wc) & (frac >= lc.get("water_min_frac", 0.6)), 1.0,
                             np.where(dom.notna() & ~dom.isin(wc), 0.0, np.nan))
+    for k in dcfg.get("heads_exclude", []):                                  # labels unreliable on this scene (see config)
+        if k in lab.columns:
+            log(f"head {k}: excluded by scene config"); lab = lab.drop(columns=k)
     for k in list(lab.columns):                                              # a head needs positives in this scene
         if (lab[k] == 1).sum() < lc.get("min_positives", 30):
             log(f"head {k}: too few positives in this scene ({int((lab[k] == 1).sum())}), skipped"); lab = lab.drop(columns=k)
     res["label_counts"] = {k: dict(pos=int((lab[k] == 1).sum()), neg=int((lab[k] == 0).sum())) for k in lab}
     log("labels:", res["label_counts"])
-    # ---- features & classifier
+    # ---- features & classifier (+ neighbourhood context: local means and deviations of every per-cell feature)
+    if cfg.get("context", {}).get("windows"):
+        F = add_context(F, grid, [c for c in F.columns if c not in ("n_obs_fit", "pool_radius")], tuple(cfg["context"]["windows"]))
+        log("context features added:", F.shape[1])
     feat_cols = [c for c in F.columns if c not in ("n_obs_fit", "pool_radius")]
     Xm, cols, stats = prepare(F, feat_cols)
     oof, metrics = spatial_cv(F, Xm, lab, grid.centers()[F.index.values], cfg["cv"]["block_m"], cfg["cv"]["folds"], cfg["seed"], l2=cfg["cv"]["l2"])
     blocks = blocks_of(grid.centers()[F.index.values], cfg["cv"]["block_m"])
     res["cv_metrics"] = {l: full_metrics(lab[l].values, oof[l].values, blocks, cfg["seed"]) for l in lab.columns}
     log("cv:", res["cv_metrics"])
+    # second model: gradient-boosted trees on the raw features (same folds; trees need no scaling, NaN has its own bin)
+    Xraw = F[cols].astype(float).replace([np.inf, -np.inf], np.nan).values
+    oof_gb, _ = spatial_cv(F, Xraw, lab, grid.centers()[F.index.values], cfg["cv"]["block_m"], cfg["cv"]["folds"], cfg["seed"],
+                           fit=lambda X, y: fit_gbdt(X, y, **cfg.get("gbdt", {})), pred=predict_gbdt)
+    res["cv_metrics_gbdt"] = {l: full_metrics(lab[l].values, oof_gb[l].values, blocks, cfg["seed"]) for l in lab.columns}
+    log("cv (gbdt):", {l: round(v["auroc"], 3) for l, v in res["cv_metrics_gbdt"].items()})
     # confound check: is the failure head more than a vegetation-vs-pavement detector? metrics WITHIN class strata
     dc = L.dominant_class.reindex(F.index)
     veg, hard = dcfg["classes"]["vegetation"], dcfg["classes"]["healthy_class_based"]
     strata = {"vegetation": dc.isin(veg).values, "non-vegetation": (~dc.isin(veg)).values & dc.notna().values,
               "hard surfaces": dc.isin(hard).values, "background": dc.eq(0).values}
-    res["failure_by_stratum"] = {k: full_metrics(np.where(m, lab.failure.values, np.nan), oof.failure.values, blocks, cfg["seed"])
-                                 for k, m in strata.items()}
-    res["failure_class_only_baseline"] = full_metrics(lab.failure.values, dc.isin(veg).astype(float).values, blocks, cfg["seed"])
-    log("failure by stratum:", {k: (v["n"], v["positives"], v["auroc"]) for k, v in res["failure_by_stratum"].items()})
-    log("class-only baseline (vegetation indicator; uses GT class, upper bound for a class detector):", res["failure_class_only_baseline"]["auroc"])
+    if "failure" in lab.columns:
+        res["failure_by_stratum"] = {k: full_metrics(np.where(m, lab.failure.values, np.nan), oof.failure.values, blocks, cfg["seed"])
+                                     for k, m in strata.items()}
+        if "failure" in oof_gb:
+            res["failure_by_stratum_gbdt"] = {k: full_metrics(np.where(m, lab.failure.values, np.nan), oof_gb.failure.values, blocks, cfg["seed"])
+                                              for k, m in strata.items()}
+        res["failure_class_only_baseline"] = full_metrics(lab.failure.values, dc.isin(veg).astype(float).values, blocks, cfg["seed"])
+        log("failure by stratum:", {k: (v["n"], v["positives"], v["auroc"]) for k, v in res["failure_by_stratum"].items()})
+        log("class-only baseline (vegetation indicator; uses GT class, upper bound for a class detector):", res["failure_class_only_baseline"]["auroc"])
     # baselines: single signals, each oriented a priori by physics (higher value = more suspicious), never flipped
     # after looking at the labels
     single = {"low_texture (textureless_frac)": F.textureless_frac, "photometric (long 1-NCC p50)": F.long_cost_min_p50,
@@ -111,19 +133,32 @@ def main(argv=None):
               "curve": [c for c in cols if any(k in c for k in ("sharpness", "flatness", "periodic", "multi_min", "boundary"))],
               "photometric": [c for c in cols if any(k in c for k in ("cost_min", "gain", "contrast", "pho_", "reflective"))],
               "height": [c for c in cols if any(k in c for k in ("dz_sigma", "below"))],
-              "glint": ["glint_max"], "coverage/texture": ["n_pairs", "n_valid", "textureless_frac", "ref_std_med", "max_baseline_m", "max_heading_diff"]}
+              "glint": [c for c in cols if c.startswith("glint")],
+              "coverage/texture": [c for c in cols if c.split("_ctx")[0].split("_dev")[0] in ("n_pairs", "n_valid", "textureless_frac", "ref_std_med", "max_baseline_m", "max_heading_diff")]}
     abl = {}
     for gname, gcols in groups.items():
         keep = [c for c in feat_cols if c not in gcols]
         Xg, _, _ = prepare(F, keep); _, mg = spatial_cv(F, Xg, lab[[c for c in ("failure", "layered", "water") if c in lab.columns]], grid.centers()[F.index.values], cfg["cv"]["block_m"], cfg["cv"]["folds"], cfg["seed"], l2=cfg["cv"]["l2"])
         abl[f"without_{gname}"] = {k: v["auroc"] for k, v in mg.items()}
     res["ablation_auroc"] = abl; log("ablation:", abl)
+    # ---- how much: error magnitude + conformal upper bounds on reliable-GT cells (labels: comparison side only)
+    mag_cols = {}
+    if "failure" in lab.columns:
+        gm = ((L.gt_good == True) & L.error.notna()).values
+        if gm.sum() >= 500:
+            pm, Ug, Um, res["magnitude"] = magnitude_cv(Xraw[gm], np.abs(L.error.values[gm]), blocks[gm], cfg["cv"]["folds"], cfg["seed"],
+                                                        cfg.get("magnitude", {}).get("alpha", 0.9), gbdt_kw=cfg.get("gbdt", {}))
+            for nm, v in [("mag_pred_m", pm), ("mag_upper_m", Um)]:
+                col = np.full(len(F), np.nan); col[gm] = v; mag_cols[nm] = col
+            log("magnitude:", {k: (round(v, 3) if isinstance(v, float) else v) for k, v in res["magnitude"].items() if k != "global"})
     # ---- final models on all labelled cells -> predictions for every cell
     pred = pd.DataFrame(index=F.index)
     for l in lab.columns:
         y = lab[l].values; m = np.isfinite(y)
         pred[f"p_{l}"] = predict(fit_logreg(Xm[m], y[m], l2=cfg["cv"]["l2"]), Xm) if (y[m] == 1).sum() >= 5 else np.nan
-    D = pd.concat([sc.add_prefix("cause_"), pred, oof.add_prefix("oof_"), F[["n_pairs", "n_valid", "moving_score", "reflective_score", "pool_radius"]]], axis=1)
+    D = pd.concat([sc.add_prefix("cause_"), pred, oof.add_prefix("oof_"), oof_gb.add_prefix("oofgb_"), F[["n_pairs", "n_valid", "moving_score", "reflective_score", "pool_radius"]]], axis=1)
+    for nm, v in mag_cols.items():
+        D[nm] = v
     D["x"] = grid.centers()[D.index.values, 0]; D["y"] = grid.centers()[D.index.values, 1]
     D.to_parquet(out / "cell_diagnosis.parquet"); F.to_parquet(out / "cell_features.parquet"); lab.to_parquet(out / "proxy_labels.parquet")
     # maps

@@ -1,0 +1,228 @@
+{
+  "ground_truth": {
+    "cells_gt": 52179,
+    "cells_gt_good": 12941.0,
+    "global_offset_terra_minus_lidar_m": -2.5420405864715576,
+    "icp_residual_stable_m": 0.7972026634137714,
+    "sanity_between_frame_spread_m": NaN,
+    "gt_uncertainty_iqr_median_m": 0.23407292366027832
+  },
+  "noise_floor_p90_px": [
+    {
+      "pairs": "climb:10",
+      "noisy_gnss+ref": 6.89,
+      "rtk": 8.1,
+      "rtk+ref": 0.53,
+      "terra": 0.62,
+      "terra+ref": 0.54
+    },
+    {
+      "pairs": "climb:5",
+      "noisy_gnss+ref": 17.33,
+      "rtk": 6.92,
+      "rtk+ref": 0.47,
+      "terra": 0.55,
+      "terra+ref": 0.47
+    },
+    {
+      "pairs": "turn:10",
+      "noisy_gnss+ref": 4.53,
+      "rtk": 9.15,
+      "rtk+ref": 0.82,
+      "terra": 0.95,
+      "terra+ref": 0.89
+    },
+    {
+      "pairs": "turn:5",
+      "noisy_gnss+ref": 5.88,
+      "rtk": 4.9,
+      "rtk+ref": 0.64,
+      "terra": 0.82,
+      "terra+ref": 0.74
+    },
+    {
+      "pairs": "within_line:1",
+      "noisy_gnss+ref": NaN,
+      "rtk": 9.2,
+      "rtk+ref": 0.42,
+      "terra": NaN,
+      "terra+ref": NaN
+    },
+    {
+      "pairs": "within_line:10",
+      "noisy_gnss+ref": 5.61,
+      "rtk": 7.69,
+      "rtk+ref": 0.84,
+      "terra": 0.9,
+      "terra+ref": 0.85
+    },
+    {
+      "pairs": "within_line:20",
+      "noisy_gnss+ref": 5.13,
+      "rtk": 7.8,
+      "rtk+ref": 1.22,
+      "terra": 1.36,
+      "terra+ref": 1.23
+    },
+    {
+      "pairs": "within_line:40",
+      "noisy_gnss+ref": 7.21,
+      "rtk": 5.85,
+      "rtk+ref": 1.91,
+      "terra": 2.01,
+      "terra+ref": 1.98
+    },
+    {
+      "pairs": "within_line:5",
+      "noisy_gnss+ref": 4.73,
+      "rtk": 8.24,
+      "rtk+ref": 0.61,
+      "terra": 0.64,
+      "terra+ref": 0.62
+    },
+    {
+      "pairs": "within_line:80",
+      "noisy_gnss+ref": NaN,
+      "rtk": NaN,
+      "rtk+ref": NaN,
+      "terra": NaN,
+      "terra+ref": NaN
+    }
+  ],
+  "required_pose_quality_p90_px": [
+    {
+      "pos_sigma_m": 0.02,
+      "cross_line": NaN,
+      "crossing": NaN,
+      "within_line:10": 0.86,
+      "within_line:20": 1.24,
+      "within_line:40": 2.09,
+      "within_line:5": 0.62,
+      "within_line:80": NaN
+    },
+    {
+      "pos_sigma_m": 0.05,
+      "cross_line": NaN,
+      "crossing": NaN,
+      "within_line:10": 0.91,
+      "within_line:20": 1.31,
+      "within_line:40": 2.13,
+      "within_line:5": 0.68,
+      "within_line:80": NaN
+    },
+    {
+      "pos_sigma_m": 0.1,
+      "cross_line": NaN,
+      "crossing": NaN,
+      "within_line:10": 1.19,
+      "within_line:20": 1.42,
+      "within_line:40": 2.19,
+      "within_line:5": 0.87,
+      "within_line:80": NaN
+    },
+    {
+      "pos_sigma_m": 0.2,
+      "cross_line": NaN,
+      "crossing": NaN,
+      "within_line:10": 1.7,
+      "within_line:20": 1.75,
+      "within_line:40": 2.41,
+      "within_line:5": 1.42,
+      "within_line:80": NaN
+    },
+    {
+      "pos_sigma_m": 0.5,
+      "cross_line": NaN,
+      "crossing": NaN,
+      "within_line:10": 3.44,
+      "within_line:20": 3.34,
+      "within_line:40": 4.73,
+      "within_line:5": 3.54,
+      "within_line:80": NaN
+    },
+    {
+      "pos_sigma_m": 1.0,
+      "cross_line": NaN,
+      "crossing": NaN,
+      "within_line:10": 6.54,
+      "within_line:20": 6.47,
+      "within_line:40": 9.19,
+      "within_line:5": 6.59,
+      "within_line:80": NaN
+    }
+  ],
+  "step2": {
+    "sweep": null,
+    "height_offset_m": 0.0,
+    "height_vs_lidar": [],
+    "across_noise_floor_paved": []
+  },
+  "step3": {
+    "label_counts": {
+      "vehicle": {
+        "pos": 77,
+        "neg": 57294
+      },
+      "water": {
+        "pos": 4149,
+        "neg": 53063
+      }
+    },
+    "cv_metrics": {
+      "vehicle": {
+        "n": 44738,
+        "positives": 0,
+        "base_rate": 0.0,
+        "auroc": NaN,
+        "auroc_ci95": [
+          NaN,
+          NaN
+        ],
+        "ap": NaN,
+        "ap_ci95": [
+          NaN,
+          NaN
+        ],
+        "recall_at_5pct_fpr": NaN,
+        "brier": 0.010022503167003427
+      },
+      "water": {
+        "n": 57212,
+        "positives": 4149,
+        "base_rate": 0.07251975110116758,
+        "auroc": 0.9470017556042505,
+        "auroc_ci95": [
+          0.9230389659870741,
+          0.9666523344166743
+        ],
+        "ap": 0.573137441128183,
+        "ap_ci95": [
+          0.43167976073919423,
+          0.7134290094462089
+        ],
+        "recall_at_5pct_fpr": 0.6705230175946011,
+        "brier": 0.08749730924057106
+      }
+    },
+    "ablation": {
+      "without_across": {
+        "water": 0.9337480066112585
+      },
+      "without_curve": {
+        "water": 0.9473664021711787
+      },
+      "without_photometric": {
+        "water": 0.9482738397788134
+      },
+      "without_height": {
+        "water": 0.9326898820347916
+      },
+      "without_glint": {
+        "water": 0.9362074450518209
+      },
+      "without_coverage/texture": {
+        "water": 0.9390924452948504
+      }
+    }
+  }
+}

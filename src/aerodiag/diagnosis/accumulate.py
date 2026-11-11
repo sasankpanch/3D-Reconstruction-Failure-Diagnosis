@@ -26,6 +26,12 @@ def accumulate(S: pd.DataFrame) -> pd.DataFrame:
     V = S[valid]; gv = V.groupby("cell_id")
     base["n_valid"] = gv.size(); base["periodic_frac"] = gv.periodic.mean(); base["multi_min_frac"] = gv.n_minima.apply(lambda s: (s >= 2).mean())
     base["below_frac"] = gv.below_terrain.mean(); base["boundary_frac"] = gv.at_boundary.mean(); base["ref_std_med"] = gv.ref_std.median()
+    # glint confirmation: geometric glint risk alone fires on any slope facing the half-vector; a real specular
+    # reflection must also change brightness between the near-specular view and the other view. Excess |gain| of
+    # high-risk pairs over the cell's own low-risk pairs (onboard photometry only).
+    hi = V[V.glint_risk >= 0.3].groupby("cell_id").gain.median(); lo = V[V.glint_risk < 0.05].groupby("cell_id").gain.median()
+    base["glint_frac"] = gv.glint_risk.apply(lambda s: (s >= 0.3).mean())
+    base["glint_gain_excess"] = (hi - lo).reindex(base.index)
     out.append(base)
     for b in ["short", "mid", "long", "cross"]:
         gb = V[V.bcls == b].groupby("cell_id")

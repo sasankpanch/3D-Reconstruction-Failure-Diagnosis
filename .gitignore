@@ -21,3 +21,13 @@ outputs/run_all.log
 *.blg
 *.out
 *.synctex.gz
+
+# line-offset variants: upstream stages are symlinks to the base scene's outputs
+outputs/lo/*
+!outputs/lo/step2/
+!outputs/lo/step3/
+outputs/town_lo/*
+!outputs/town_lo/step2/
+!outputs/town_lo/step3/
+# local run helpers
+outputs/*.sh

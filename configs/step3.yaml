@@ -9,6 +9,7 @@ physics:                     # documented, untuned thresholds for label-free cau
   good_baseline_m: 30.0
   good_n_pairs: 10
   layer_cost_jump: 0.2       # increase of 1-NCC from short to long baselines -> score 1
+  glint_gain_full: 0.2       # excess |log gain| of near-specular pairs -> glint fully confirmed
 labels:                      # comparison-side proxy labels (training targets only)
   failure_min_abs_error: 0.5
   healthy_max_abs_error: 0.15
@@ -16,3 +17,6 @@ labels:                      # comparison-side proxy labels (training targets on
   flat_max_spread: 0.3
   vehicle_min_points: 20
 cv: {block_m: 25.0, folds: 5, l2: 10.0}
+gbdt: {rounds: 150, depth: 3, lr: 0.1, lam: 10.0, min_leaf: 50, subsample: 0.5, max_rows: 60000}
+context: {windows: [3, 7]}   # neighbourhood mean / deviation of every per-cell feature (cells)
+magnitude: {alpha: 0.9}      # conformal coverage target for the error upper bound

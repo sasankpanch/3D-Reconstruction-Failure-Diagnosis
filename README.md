@@ -14,23 +14,35 @@ for evaluation; the DJI Terra reconstruction is the model under test and is neve
 ## Results (UAVScenes)
 
 Spatial 5-fold cross-validation over 25 m blocks, 95% block-bootstrap intervals. Failure = |Terra − LiDAR| ≥ 0.5 m.
+Model: gradient-boosted trees on per-cell signals plus their 3×3 / 7×7 neighbourhood context.
 
 | Prediction | HKairport_GNSS03 | AMtown03 | HKisland_GNSS03 |
 |---|---|---|---|
-| Failure location (AUROC) | 0.93 [0.90, 0.95] | 0.86 [0.84, 0.88] | – ¹ |
-| Layered structure | 0.95 | 0.91 | – |
-| Vehicles (AP, base rate 0.002) | 0.94 (0.06) | 0.87 (0.03) | – |
-| Water (AP, base rate 0.07) | – (none) | – (none) | 0.93 (0.48) |
+| Failure location (AUROC) | 0.94 [0.91, 0.96] | 0.92 [0.91, 0.94] | – ¹ |
+| Failure AP (base rate 0.22) | 0.76 | 0.80 | – |
+| Failure inside / outside vegetation | 0.92 / 0.92 | 0.92 / 0.92 | – |
 | Land-cover class alone (failure) | 0.66 | 0.46 | – |
+| Layered structure | 0.98 | 0.95 | – |
+| Vehicles (AP, base rate 0.002) | 0.93 (0.26) | 0.89 (0.04) | – |
+| Water (AP, base rate 0.07) | – (none) | – (none) | 0.95 (0.69) |
 
-Cross-scene transfer (train on one scene, test on the other, no retraining), failure AUROC:
-airport → town 0.73 [0.69, 0.76], town → airport 0.79 [0.73, 0.85].
+**How much:** per-cell error magnitude with a spatially cross-fitted conformal 90% upper bound. Coverage 0.90 on both
+scenes, median bound 0.32 m (airport) / 0.38 m (town); 70% / 59% of cells are certified below 0.5 m, 97% of them
+correctly. Coverage on cells that do fail is lower (0.65).
+
+**Calibration:** cross-fitted Platt scaling brings the expected calibration error of the failure / layered / water heads
+to ≤ 0.02. Vehicle probabilities stay near the base rate; use them as a ranking.
+
+**Cross-scene transfer** (train on one scene, test on the other, no retraining), failure AUROC:
+town → airport 0.90, airport → town 0.79 (`outputs/transfer/TRANSFER.md`).
 
 ¹ HKisland is almost entirely vegetation and sea; too few hard surfaces to align the Terra model to LiDAR reliably,
-so it is used only for the water head (label from LiDAR semantic classes).
+so only the water head (label from LiDAR semantic classes) is trained there (`heads_exclude` in its config).
 
 Across-epipolar noise floor on healthy ground with RTK + per-pair rotation refinement: p90 below 1 px within a flight
-line (1 px ≈ 5.5 cm at 80 m). Detailed reports: `outputs/DATA_REPORT.md`, `outputs/track_a/LABELS_REPORT.md`,
+line (1 px ≈ 5.5 cm at 80 m). Across lines RTK carries a camera–RTK time offset (−0.10 s airport, +0.08 s town) and a
+per-line bias; `src/aerodiag/calib/line_offsets.py` estimates both from images + RTK only (cross-line p90 on airport
+3.4 → 1.4 px on held-out pairs). Detailed reports: `outputs/DATA_REPORT.md`, `outputs/track_a/LABELS_REPORT.md`,
 `outputs/track_b/NOISE_FLOOR_REPORT.md`, `outputs/PIPELINE_RESULTS.md`, `outputs/transfer/TRANSFER.md`.
 
 ## Pipeline
@@ -41,9 +53,11 @@ line (1 px ≈ 5.5 cm at 80 m). Detailed reports: `outputs/DATA_REPORT.md`, `out
 | Track A | `aerodiag-track-a` | LiDAR ground-truth map, per-cell reliability, Terra ↔ LiDAR robust ICP, error labels |
 | Track B | `aerodiag-track-b` | Feature matching, rotation-only pose refinement, across-epipolar noise floor (go/no-go gate) |
 | Step 2 | `aerodiag-step2` | Coarse terrain triangulated from images; per-cell plane sweep along epipolar lines; five signals (across residual, cost-curve shape, photometric, height plausibility, sun glint) |
-| Step 3 | `aerodiag-step3` | Per-cell accumulation by baseline class, motion / view-dependence fits, logistic heads, spatial CV, baselines, ablations |
+| Step 3 | `aerodiag-step3` | Per-cell accumulation by baseline class, neighbourhood context, motion / view-dependence fits, logistic + boosted-tree heads, error magnitude with conformal bounds, spatial CV, baselines, ablations |
+| Calibrate | `aerodiag-calibrate` | Cross-fitted Platt scaling, reliability diagrams |
 | Summary | `aerodiag-summary` | Paper metrics → `outputs/PIPELINE_RESULTS.md` |
-| Transfer | `aerodiag-transfer` | Cross-scene evaluation |
+| Transfer | `aerodiag-transfer` | Cross-scene evaluation (both models, training-scene or within-scene rank normalisation) |
+| Line offsets | `python -m aerodiag.calib.line_offsets <cfg>` | Camera–RTK time offset + per-line RTK bias from per-line terrain alignment (optional; `configs/data_lo.yaml`) |
 
 ## Setup
 
@@ -78,6 +92,7 @@ p90 5.0 px on held-out cruise lines). `configs/data_town.yaml` uses distortion r
 
 ## Limitations
 
-Moving-object causes remain untested (almost all vehicles are parked); hand-built "reflective"/"moving" rule scores do
-not separate water on their own (the learned heads do); two-view height is biased by 0.4–0.6 m (RTK line offsets);
-probabilities are uncalibrated rankings; cross-scene transfer loses 0.07–0.20 AUROC.
+Moving-object causes remain untested (almost all vehicles are parked); hand-built "reflective"/"moving" rule scores and
+the glint score do not separate water or failures on their own (the learned heads do); only two scenes carry failure
+labels, and airport → town transfer loses 0.13 AUROC; the error bound under-covers cells that actually fail; the
+line-offset correction improves geometry but not the detection heads.

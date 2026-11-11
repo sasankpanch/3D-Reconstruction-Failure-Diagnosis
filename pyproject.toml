@@ -22,6 +22,7 @@ aerodiag-step2 = "aerodiag.cli.step2:main"
 aerodiag-step3 = "aerodiag.cli.step3:main"
 aerodiag-summary = "aerodiag.cli.summary:main"
 aerodiag-transfer = "aerodiag.cli.transfer:main"
+aerodiag-calibrate = "aerodiag.cli.calibrate:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

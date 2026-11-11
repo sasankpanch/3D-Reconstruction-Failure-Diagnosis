@@ -1,0 +1,202 @@
+{
+  "edges": [
+    {
+      "d": [
+        0.19999999999999996,
+        1.0499999999999998,
+        -0.7991835912426879
+      ],
+      "cost": 0.1497168574260641,
+      "cost_at_zero": 0.2004907600328778,
+      "cost_median": 0.2173597484745855,
+      "n": 204,
+      "dz_at_zero": -0.7432861158257822,
+      "a": 0,
+      "b": 1,
+      "relief_ratio": 1.451805442696565,
+      "horizontal_trusted": false
+    },
+    {
+      "d": [
+        0.8499999999999999,
+        0.14999999999999997,
+        0.04032804088227948
+      ],
+      "cost": 0.09626336326531515,
+      "cost_at_zero": 0.13494248308261803,
+      "cost_median": 0.22587777336865855,
+      "n": 1318,
+      "dz_at_zero": 0.05725595977492759,
+      "a": 0,
+      "b": 2,
+      "relief_ratio": 2.3464562810475273,
+      "horizontal_trusted": true
+    },
+    {
+      "d": [
+        -1.4500000000000002,
+        -0.20000000000000007,
+        -0.3733353536900097
+      ],
+      "cost": 0.15827512718419712,
+      "cost_at_zero": 0.23473297960607908,
+      "cost_median": 0.2685800837989234,
+      "n": 575,
+      "dz_at_zero": -0.33894505188148116,
+      "a": 0,
+      "b": 3,
+      "relief_ratio": 1.6969190837316832,
+      "horizontal_trusted": true
+    },
+    {
+      "d": [
+        -1.5,
+        -1.25,
+        -0.1767168352821571
+      ],
+      "cost": 0.21020892778931,
+      "cost_at_zero": 0.300214982780588,
+      "cost_median": 0.3198479272124217,
+      "n": 684,
+      "dz_at_zero": -0.11714560552300668,
+      "a": 0,
+      "b": 5,
+      "relief_ratio": 1.521571564900429,
+      "horizontal_trusted": true
+    },
+    {
+      "d": [
+        1.5,
+        0.29999999999999993,
+        0.770780230365709
+      ],
+      "cost": 0.3290385065217336,
+      "cost_at_zero": 0.3893973254625891,
+      "cost_median": 0.536380229061109,
+      "n": 588,
+      "dz_at_zero": 0.7929591763594388,
+      "a": 1,
+      "b": 2,
+      "relief_ratio": 1.6301442488637121,
+      "horizontal_trusted": true
+    },
+    {
+      "d": [
+        -2.0500000000000003,
+        -0.0500000000000001,
+        -0.4321992778015442
+      ],
+      "cost": 0.20092031070956295,
+      "cost_at_zero": 0.3018653699003835,
+      "cost_median": 0.336246253459187,
+      "n": 1595,
+      "dz_at_zero": -0.41869582220630264,
+      "a": 2,
+      "b": 3,
+      "relief_ratio": 1.6735304274202634,
+      "horizontal_trusted": true
+    },
+    {
+      "d": [
+        -2.95,
+        -1.05,
+        -0.21589680057725502
+      ],
+      "cost": 0.2600607146687537,
+      "cost_at_zero": 0.4308669989094511,
+      "cost_median": 0.48454734606608696,
+      "n": 977,
+      "dz_at_zero": -0.2727421621794548,
+      "a": 2,
+      "b": 5,
+      "relief_ratio": 1.8632085460630528,
+      "horizontal_trusted": true
+    },
+    {
+      "d": [
+        0.3499999999999999,
+        -1.0,
+        0.4472383301876732
+      ],
+      "cost": 0.2105335567910771,
+      "cost_at_zero": 0.28390911956552856,
+      "cost_median": 0.36317713598116796,
+      "n": 1381,
+      "dz_at_zero": 0.38803535788090926,
+      "a": 3,
+      "b": 5,
+      "relief_ratio": 1.7250320638508314,
+      "horizontal_trusted": true
+    }
+  ],
+  "correction_m": {
+    "0": [
+      0.5427904919833866,
+      0.24240515030693197,
+      0.2499345655556839
+    ],
+    "1": [
+      -0.11148979601261302,
+      0.04923683994406574,
+      -0.5244774120793492
+    ],
+    "2": [
+      1.3885102039873862,
+      0.34923683994406635,
+      0.2878134348238197
+    ],
+    "3": [
+      -0.9181434741806912,
+      0.19222576024272076,
+      -0.1834081397542767
+    ],
+    "5": [
+      -0.9016674257774681,
+      -0.8331045904377847,
+      0.17013755145412346
+    ]
+  },
+  "time_offset": {
+    "time_offset_s": -0.10074764153049151,
+    "horizontal_rms_before_m": 0.6931932313904162,
+    "horizontal_rms_after_m": 0.32464704959821594
+  },
+  "validation": {
+    "selection_p90": {
+      "time_offset": 3.282723272979222,
+      "time_offset+line_residual": 2.3993020980909856
+    },
+    "choice": "time_offset+line_residual",
+    "cross_line_before": {
+      "p50": 1.034661023205974,
+      "p90": 3.424012759184463,
+      "n": 19431
+    },
+    "cross_line_after": {
+      "p50": 0.36915897165757405,
+      "p90": 1.3869715565306304,
+      "n": 19431
+    },
+    "crossing_before": {
+      "p50": 0.6913839518387437,
+      "p90": 3.1138634718636076,
+      "n": 30869
+    },
+    "crossing_after": {
+      "p50": 0.7890708711414444,
+      "p90": 2.6242129222383084,
+      "n": 30869
+    },
+    "within_line_before": {
+      "p50": 0.20345778907785703,
+      "p90": 0.7787704957359161,
+      "n": 393357
+    },
+    "within_line_after": {
+      "p50": 0.20307721147124025,
+      "p90": 0.7782390037153235,
+      "n": 393357
+    }
+  },
+  "method": "Per-flight-line RTK offset correction from image tie geometry (onboard only: images, timestamps, RTK).\n\nRTK is precise within a flight line but carries a line-dependent bias (decimetres to metres). Within a line the bias is\ncommon to all frames, so within-line two-view triangulation is self-consistent but shifted by that line's bias.\n  1. per line: rotation-refined within-line pairs (gap >= min_gap) -> triangulated points -> 1 m height raster\n     (median per cell);\n  2. per overlapping line pair (a, b): 3D shift d_ab = o_b - o_a that best aligns b's raster onto a's\n     (horizontal grid search, vertical = robust median, cost = median |dz| over common cells); horizontal shifts are\n     only trusted where the cost has a clear minimum (relief present), else only the vertical component is used;\n  3. weighted least squares for one offset per line (gauge: weighted mean offset = 0, so the RTK->working similarity\n     is unchanged), then frames outside lines get the offset interpolated in time between line mid-times.\nValidation (onboard): across-epipolar residual of cross-line pairs before/after (rotation-refined), which must drop,\nand within-line pairs, which must stay unchanged. Output: <out>/line_offsets/offsets.json, frame_offsets.npy, report.\nUsage: python -m aerodiag.calib.line_offsets configs/data.yaml"
+}

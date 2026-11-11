@@ -33,6 +33,7 @@ rtk:
 classes:
   dynamic: [20, 24]                 # sedan, truck
   water: [4, 5]                     # river, pool (absent in this sequence)
+  vehicle: [20, 24]                 # sedan, truck (LiDAR semantic classes; vehicle-head labels only)
   healthy_class_based: [10, 3, 18, 1]   # hard, flat, textured surfaces (noise floor)
   paved: [10, 3, 18]                # flat paved ground (height sanity checks)
   vegetation: [13]             # confound strata / reported separately

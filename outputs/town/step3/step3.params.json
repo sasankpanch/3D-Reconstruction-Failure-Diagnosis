@@ -94,7 +94,8 @@
         "t_full": 4.0,
         "good_baseline_m": 30.0,
         "good_n_pairs": 10,
-        "layer_cost_jump": 0.2
+        "layer_cost_jump": 0.2,
+        "glint_gain_full": 0.2
       },
       "labels": {
         "failure_min_abs_error": 0.5,
@@ -107,14 +108,32 @@
         "block_m": 25.0,
         "folds": 5,
         "l2": 10.0
+      },
+      "gbdt": {
+        "rounds": 150,
+        "depth": 3,
+        "lr": 0.1,
+        "lam": 10.0,
+        "min_leaf": 50,
+        "subsample": 0.5,
+        "max_rows": 60000
+      },
+      "context": {
+        "windows": [
+          3,
+          7
+        ]
+      },
+      "magnitude": {
+        "alpha": 0.9
       }
     }
   },
-  "created": "2026-11-09T17:52:22",
+  "created": "2026-11-10T19:26:19",
   "python": "3.12.3",
   "platform": "Linux-7.0.0-42-generic-x86_64-with-glibc2.39",
   "argv": [
-    ".venv/bin/aerodiag-step3",
+    "/home/edgar/Desktop/CC/src/aerodiag/cli/step3.py",
     "--data",
     "configs/data_town.yaml"
   ],

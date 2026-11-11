@@ -80,6 +80,10 @@ class Step2:
         from .track_b import TrackB
         tbo = TrackB.__new__(TrackB); tbo.ds = ds; tbo.cfg = load_config(Path(dcfg["root"]) / "configs" / "track_b.yaml"); tbo.dcfg = dcfg; tbo.results = {}
         self.T = tbo.build_sources()["rtk"].T_wc; self.sim_R = None
+        lo = dcfg.get("rtk_line_offsets")                                   # onboard per-line RTK correction (calib/line_offsets.py)
+        if lo:
+            off = np.load(Path(dcfg["root"]) / lo); self.T = self.T.copy(); self.T[:, :3, 3] += off
+            log("rtk line offsets applied:", lo, "max |offset| %.2f m" % np.abs(off).max())
         from ..io.rtk import load_rtk
         from ..poses.rtk import fit_rtk_to_working
         rtk = load_rtk(ds.p["rtk_csv"], ds.terra_origin); f = ds.frames
@@ -113,7 +117,9 @@ class Step2:
 
     def stage_sweep(self):
         from ..config import config_hash
-        key = config_hash(dict(sweep=self.cfg["sweep"], pairs=self.cfg["pairs"], terrain=self.cfg["terrain"], n_pairs=len(self.Tp)))
+        import hashlib
+        pose_sig = hashlib.sha1(np.round(self.T[:, :3, 3], 4).tobytes()).hexdigest()[:12]      # poses enter the cache key
+        key = config_hash(dict(sweep=self.cfg["sweep"], pairs=self.cfg["pairs"], terrain=self.cfg["terrain"], n_pairs=len(self.Tp), poses=pose_sig))
         done = self.out / "cell_pair_signals.parquet"; tag = self.out / "cell_pair_signals.hash"
         if done.exists() and tag.exists() and tag.read_text() == key:
             log("sweep: cached"); return

@@ -1,0 +1,122 @@
+{
+  "edges": [
+    {
+      "d": [
+        -1.5,
+        -0.9000000000000001,
+        0.19000265177335507
+      ],
+      "cost": 0.15741865884076844,
+      "cost_at_zero": 0.2992166209331799,
+      "cost_median": 0.2820144009461174,
+      "n": 399,
+      "dz_at_zero": 0.2365131068342592,
+      "a": 1,
+      "b": 2,
+      "relief_ratio": 1.7914928447674021,
+      "horizontal_trusted": true
+    },
+    {
+      "d": [
+        1.65,
+        0.3,
+        -0.022142110788173852
+      ],
+      "cost": 0.15669367459446448,
+      "cost_at_zero": 0.2660361469394559,
+      "cost_median": 0.3263417911670956,
+      "n": 710,
+      "dz_at_zero": -0.0236420707818894,
+      "a": 2,
+      "b": 3,
+      "relief_ratio": 2.0826736753202946,
+      "horizontal_trusted": true
+    },
+    {
+      "d": [
+        -2.2,
+        -0.6000000000000001,
+        -0.1298605427947166
+      ],
+      "cost": 0.14876785504479173,
+      "cost_at_zero": 0.23039775695089304,
+      "cost_median": 0.2600169316369687,
+      "n": 522,
+      "dz_at_zero": 0.008347316077902178,
+      "a": 5,
+      "b": 6,
+      "relief_ratio": 1.747803190135944,
+      "horizontal_trusted": true
+    }
+  ],
+  "correction_m": {
+    "1": [
+      0.44999999999999984,
+      0.4999999999999999,
+      -0.11928773091951203
+    ],
+    "2": [
+      -1.0499999999999998,
+      -0.3999999999999999,
+      0.07071492085384291
+    ],
+    "3": [
+      0.5999999999999995,
+      -0.10000000000000013,
+      0.04857281006566909
+    ],
+    "5": [
+      1.0999999999999999,
+      0.30000000000000004,
+      0.0649302713973583
+    ],
+    "6": [
+      -1.1000000000000003,
+      -0.3000000000000001,
+      -0.06493027139735831
+    ]
+  },
+  "time_offset": {
+    "time_offset_s": 0.07871709369429122,
+    "horizontal_rms_before_m": 0.6844705983459041,
+    "horizontal_rms_after_m": 0.20415262605852258
+  },
+  "validation": {
+    "selection_p90": {
+      "time_offset": 2.1756495857100293,
+      "time_offset+line_residual": 2.7912578505124603
+    },
+    "choice": "time_offset",
+    "cross_line_before": {
+      "p50": 0.9035288105075362,
+      "p90": 85.81399279110335,
+      "n": 379
+    },
+    "cross_line_after": {
+      "p50": 0.5727402949635606,
+      "p90": 85.78596732492441,
+      "n": 379
+    },
+    "crossing_before": {
+      "p50": 0.9058895595058529,
+      "p90": 3.343408369831287,
+      "n": 16061
+    },
+    "crossing_after": {
+      "p50": 0.6487930065403705,
+      "p90": 2.172068152250184,
+      "n": 16061
+    },
+    "within_line_before": {
+      "p50": 0.20839447232992617,
+      "p90": 0.8850354006613581,
+      "n": 360026
+    },
+    "within_line_after": {
+      "p50": 0.20827079758679273,
+      "p90": 0.8852882894568115,
+      "n": 360026
+    }
+  },
+  "method": "Per-flight-line RTK offset correction from image tie geometry (onboard only: images, timestamps, RTK).\n\nRTK is precise within a flight line but carries a line-dependent bias (decimetres to metres). Within a line the bias is\ncommon to all frames, so within-line two-view triangulation is self-consistent but shifted by that line's bias.\n  1. per line: rotation-refined within-line pairs (gap >= min_gap) -> triangulated points -> 1 m height raster\n     (median per cell);\n  2. per overlapping line pair (a, b): 3D shift d_ab = o_b - o_a that best aligns b's raster onto a's\n     (horizontal grid search, vertical = robust median, cost = median |dz| over common cells); horizontal shifts are\n     only trusted where the cost has a clear minimum (relief present), else only the vertical component is used;\n  3. weighted least squares for one offset per line (gauge: weighted mean offset = 0, so the RTK->working similarity\n     is unchanged), then frames outside lines get the offset interpolated in time between line mid-times.\nValidation (onboard): across-epipolar residual of cross-line pairs before/after (rotation-refined), which must drop,\nand within-line pairs, which must stay unchanged. Output: <out>/line_offsets/offsets.json, frame_offsets.npy, report.\nUsage: python -m aerodiag.calib.line_offsets configs/data.yaml"
+}

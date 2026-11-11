@@ -34,7 +34,12 @@ rtk:
 classes:
   dynamic: [20, 24]                 # sedan, truck
   water: [4, 5]                     # river, pool
+  vehicle: [20, 24]                 # sedan, truck (LiDAR semantic classes; vehicle-head labels only)
   healthy_class_based: [3, 2, 18, 19, 1]   # hard, flat, textured surfaces (noise floor)
   paved: [3, 2, 18, 19]                # flat paved ground (height sanity checks)
   vegetation: [13, 14]             # confound strata / reported separately
   report_separately: [0, 13]        # background, green_field (mostly forest)  (Q6)
+
+# Terra <-> LiDAR alignment is unreliable on this scene (88 stable cells): heads whose labels depend on it are not
+# trained or reported. Water uses the LiDAR semantic class only and is kept.
+heads_exclude: [failure, layered]

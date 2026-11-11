@@ -1,0 +1,13 @@
+{
+  "k1": -0.05688920553558595,
+  "k2": 0.11235272496414524,
+  "k3": -0.05558607918039579,
+  "p1": 0.00122,
+  "p2": 0.00064,
+  "K": "calibration file",
+  "method": "Onboard radial-distortion fit: images + RTK only (stand-in attitude), per-pair rotation-only refinement.\nCalibration pairs: climb / descent / turn / diagonal segments; cruise lines held out for evaluation.",
+  "cal_pairs": 197,
+  "eval_pairs": 197,
+  "eval_p50": 0.19146747484860666,
+  "eval_p90": 0.6895076436753983
+}
