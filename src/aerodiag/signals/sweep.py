@@ -77,16 +77,19 @@ def curve_shape(cost, step_px, minima_delta=0.1, min_sep=2, periodic_cv=0.25):
     return dict(k_best=k, k_off=off, cost_min=cmin, sharpness=sharp, flatness=flat, n_minima=nm, periodic=per,
                 period_px=period, at_boundary=(k == 0) | (k == K - 1))
 
-def sweep_pair(img1, img2, cam, R1, c1, R2, c2, xy, z0, normals, sun, cfg):
-    """All signals for cells (xy, z0) for one pair. Returns dict of per-cell arrays (NaN where invalid)."""
+def sweep_pair(img1, img2, cam, R1, c1, R2, c2, xy, z0, normals, sun, cfg, gpu=None):
+    """All signals for cells (xy, z0) for one pair. Returns dict of per-cell arrays (NaN where invalid).
+    gpu: optional signals.sweep_gpu.GpuSweep holding both images on the GPU; the projection / sampling / NCC of all
+    hypotheses then run on CUDA (same arithmetic, exact bilinear sampling)."""
+    smp = (lambda which, uv: gpu.sample(which, uv)) if gpu is not None else (lambda which, uv: _sample(img1 if which == 0 else img2, uv))
     h, n_s, K2 = cfg["patch_half_m"], cfg["patch_samples"], cfg["n_hyp_half"]
     o = np.linspace(-h, h, n_s); dx, dy = [a.ravel() for a in np.meshgrid(o, o)]
     N = len(xy); S = len(dx)
     P0 = np.stack([xy[:, 0:1] + dx, xy[:, 1:2] + dy, np.repeat(z0[:, None], S, 1)], -1)         # (N,S,3)
-    uv1 = _project(cam, R1, c1, P0); ref = _sample(img1, uv1)
+    uv1 = _project(cam, R1, c1, P0); ref = smp(0, uv1)
     ok = np.isfinite(ref).all(1) & (np.nanstd(ref, 1) > cfg["min_ref_std"])
     # rays from camera 1 through the reference samples
-    d = (uv1.reshape(-1, 2)); bn = cam.pixel_to_normalized(np.nan_to_num(d)); D = np.c_[bn, np.ones(len(bn))] @ R1.T
+    d = (uv1.reshape(-1, 2)); bn = (gpu or cam).pixel_to_normalized(np.nan_to_num(d)); D = np.c_[bn, np.ones(len(bn))] @ R1.T
     D = D.reshape(N, S, 3)
     # pixels per metre in image 2 along the centre ray (local epipolar scale)
     ctr = S // 2
@@ -96,24 +99,30 @@ def sweep_pair(img1, img2, cam, R1, c1, R2, c2, xy, z0, normals, sun, cfg):
     ppm = np.linalg.norm(p1 - p0, axis=-1)                                                       # px per metre of height
     dz = np.maximum(cfg["step_px"] / np.maximum(ppm, 1e-6), cfg["range_m"] / K2)
     ks = np.arange(-K2, K2 + 1); Z = z0[:, None] + dz[:, None] * ks                             # (N,K)
-    lam = (Z[:, :, None] - c1[2]) / D[:, None, :, 2]; X = c1 + lam[..., None] * D[:, None]       # (N,K,S,3)
-    uv2 = _project(cam, R2, c2, X); tgt = _sample(img2, uv2)
-    ncc = _ncc(ref[:, None, :], tgt); cost = 1 - ncc
-    cost[~np.isfinite(tgt).all(-1)] = np.nan
+    if gpu is not None:
+        cost = gpu.hypothesis_cost(D, Z, c1, R2, c2, ref)
+    else:
+        lam = (Z[:, :, None] - c1[2]) / D[:, None, :, 2]; X = c1 + lam[..., None] * D[:, None]   # (N,K,S,3)
+        uv2 = _project(cam, R2, c2, X); tgt = _sample(img2, uv2)
+        ncc = _ncc(ref[:, None, :], tgt); cost = 1 - ncc
+        cost[~np.isfinite(tgt).all(-1)] = np.nan
     step_px = dz * ppm
     cs = curve_shape(cost, step_px, cfg["minima_delta"], cfg["minima_min_sep"], cfg["periodic_cv"])
     kb = cs["k_best"]; i = np.arange(N)
     z_best = z0 + dz * (ks[kb] + cs["k_off"])
     # photometric at the best hypothesis
-    tb = tgt[i, kb]; gain = np.log(np.nanmean(tb, 1) / np.maximum(np.nanmean(ref, 1), 1e-3))
+    if gpu is not None:
+        uvb, tb = gpu.gather_best(kb)
+    else:
+        uvb, tb = uv2[i, kb], tgt[i, kb]
+    gain = np.log(np.nanmean(tb, 1) / np.maximum(np.nanmean(ref, 1), 1e-3))
     contrast = np.nanstd(tb, 1) / np.maximum(np.nanstd(ref, 1), 1e-3)
     # across-epipolar residual at the best hypothesis
-    Xb = X[i, kb]; uvb = uv2[i, kb]                                                              # (N,S,2)
     lamp = (z_best[:, None] + 0.5 - c1[2]) / D[..., 2]; uvp = _project(cam, R2, c2, c1 + lamp[..., None] * D)
     e = (uvp - uvb)[:, ctr]; e /= np.maximum(np.linalg.norm(e, axis=1, keepdims=True), 1e-9); nrm = np.stack([-e[:, 1], e[:, 0]], 1)
     sh = np.arange(-cfg["across_range_px"], cfg["across_range_px"] + 1)
     uva = uvb[:, None] + sh[None, :, None, None] * nrm[:, None, None, :]                       # (N,A,S,2)
-    ta = _sample(img2, uva); na = _ncc(ref[:, None, :], ta)
+    na = gpu.ncc_ref(ref, uva) if gpu is not None else _ncc(ref[:, None, :], smp(1, uva))
     ka = np.argmax(np.where(np.isfinite(na), na, -2), 1); offa, _ = _parabola(-np.nan_to_num(na, nan=-2), ka)
     across = sh[ka] + offa; across[(ka == 0) | (ka == len(sh) - 1)] = np.nan                      # peak outside search range
     across_gain = na[i, ka] - na[i, len(sh) // 2]

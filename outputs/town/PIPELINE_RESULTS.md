@@ -107,28 +107,28 @@ Glint: {'sun_azimuth_deg': [144.385156787149, 148.1442582028293], 'sun_elevation
 | model | auroc | auroc_ci95 | ap | recall_at_5pct_fpr |
 |---|---|---|---|---|
 | full classifier | 0.864 | [0.836, 0.890] | 0.702 | 0.490 |
-| baseline: low_texture (textureless_frac) | 0.482 | [0.466, 0.500] | 0.212 | 0.054 |
+| baseline: low_texture (textureless_frac) | 0.482 | [0.466, 0.500] | 0.222 | 0.054 |
 | baseline: photometric (long 1-NCC p50) | 0.561 | [0.516, 0.596] | 0.268 | 0.083 |
 | baseline: across (long |across| p50) | 0.542 | [0.506, 0.582] | 0.272 | 0.098 |
 | baseline: across (short |across| p50) | 0.505 | [0.478, 0.533] | 0.232 | 0.058 |
 | baseline: flat cost curve (-sharpness, long) | 0.471 | [0.413, 0.543] | 0.206 | 0.035 |
 | baseline: below-terrain fraction | 0.485 | [0.444, 0.522] | 0.206 | 0.033 |
-| baseline: coverage (-n_valid) | 0.648 | [0.585, 0.720] | 0.504 | 0.338 |
-| baseline: repetitive (periodic_frac) | 0.523 | [0.489, 0.554] | 0.249 | 0.076 |
-| physics score: featureless | 0.486 | [0.472, 0.505] | 0.219 | 0.060 |
-| physics score: repetitive | 0.523 | [0.489, 0.554] | 0.249 | 0.076 |
-| physics score: moving | 0.378 | [0.349, 0.401] | 0.173 | 0.000 |
-| physics score: reflective | 0.504 | [0.464, 0.550] | 0.225 | 0.000 |
+| baseline: coverage (-n_valid) | 0.648 | [0.585, 0.720] | 0.502 | 0.338 |
+| baseline: repetitive (periodic_frac) | 0.523 | [0.489, 0.554] | 0.250 | 0.076 |
+| physics score: featureless | 0.486 | [0.472, 0.505] | 0.228 | 0.060 |
+| physics score: repetitive | 0.523 | [0.489, 0.554] | 0.250 | 0.076 |
+| physics score: moving | 0.378 | [0.349, 0.401] | 0.175 | 0.000 |
+| physics score: reflective | 0.504 | [0.464, 0.550] | 0.217 | 0.000 |
 | physics score: glint_geometric_only | 0.470 | [0.424, 0.513] | 0.205 | 0.042 |
-| physics score: weak_geometry | 0.505 | [0.501, 0.511] | 0.383 | 0.011 |
-| physics score: hidden_layered_physics | 0.514 | [0.484, 0.545] | 0.222 | 0.000 |
+| physics score: weak_geometry | 0.505 | [0.501, 0.511] | 0.229 | 0.011 |
+| physics score: hidden_layered_physics | 0.514 | [0.484, 0.545] | 0.228 | 0.000 |
 
 ### Head `layered`: model vs baselines
 
 | model | auroc | auroc_ci95 | ap | recall_at_5pct_fpr |
 |---|---|---|---|---|
 | full classifier | 0.929 | [0.920, 0.938] | 0.988 | 0.665 |
-| baseline: low_texture (textureless_frac) | 0.497 | [0.487, 0.507] | 0.874 | 0.037 |
+| baseline: low_texture (textureless_frac) | 0.497 | [0.487, 0.507] | 0.872 | 0.037 |
 | baseline: photometric (long 1-NCC p50) | 0.710 | [0.691, 0.725] | 0.934 | 0.120 |
 | baseline: across (long |across| p50) | 0.625 | [0.597, 0.645] | 0.905 | 0.052 |
 | baseline: across (short |across| p50) | 0.557 | [0.543, 0.572] | 0.889 | 0.050 |
@@ -136,13 +136,13 @@ Glint: {'sun_azimuth_deg': [144.385156787149, 148.1442582028293], 'sun_elevation
 | baseline: below-terrain fraction | 0.481 | [0.438, 0.524] | 0.852 | 0.012 |
 | baseline: coverage (-n_valid) | 0.419 | [0.381, 0.449] | 0.858 | 0.041 |
 | baseline: repetitive (periodic_frac) | 0.580 | [0.562, 0.598] | 0.895 | 0.056 |
-| physics score: featureless | 0.494 | [0.484, 0.505] | 0.871 | 0.034 |
+| physics score: featureless | 0.494 | [0.484, 0.505] | 0.869 | 0.034 |
 | physics score: repetitive | 0.580 | [0.562, 0.598] | 0.895 | 0.056 |
-| physics score: moving | 0.356 | [0.338, 0.373] | 0.835 | 0.000 |
-| physics score: reflective | 0.730 | [0.713, 0.744] | 0.943 | 0.000 |
+| physics score: moving | 0.356 | [0.338, 0.373] | 0.831 | 0.000 |
+| physics score: reflective | 0.730 | [0.713, 0.744] | 0.939 | 0.000 |
 | physics score: glint_geometric_only | 0.614 | [0.587, 0.640] | 0.916 | 0.118 |
-| physics score: weak_geometry | 0.499 | [0.494, 0.503] | 0.903 | 0.007 |
-| physics score: hidden_layered_physics | 0.600 | [0.589, 0.614] | 0.897 | 0.000 |
+| physics score: weak_geometry | 0.499 | [0.494, 0.503] | 0.877 | 0.007 |
+| physics score: hidden_layered_physics | 0.600 | [0.589, 0.614] | 0.900 | 0.000 |
 
 ### Head `vehicle`: model vs baselines
 
@@ -163,7 +163,7 @@ Glint: {'sun_azimuth_deg': [144.385156787149, 148.1442582028293], 'sun_elevation
 | physics score: reflective | 0.526 | [0.452, 0.587] | 0.002 | 0.000 |
 | physics score: glint_geometric_only | 0.512 | [0.441, 0.611] | 0.002 | 0.081 |
 | physics score: weak_geometry | 0.490 | [0.487, 0.494] | 0.002 | 0.002 |
-| physics score: hidden_layered_physics | 0.485 | [0.460, 0.510] | 0.001 | 0.000 |
+| physics score: hidden_layered_physics | 0.485 | [0.460, 0.510] | 0.002 | 0.000 |
 
 ### Failure head within class strata (confound check)
 
@@ -173,7 +173,7 @@ Glint: {'sun_azimuth_deg': [144.385156787149, 148.1442582028293], 'sun_elevation
 | non-vegetation | 11805 | 2995 | 0.254 | 0.861 | [0.787, 0.917] | 0.764 | 0.580 |
 | hard surfaces | 3423 | 991 | 0.290 | 0.899 | [0.830, 0.947] | 0.844 | 0.716 |
 | background | 5798 | 1866 | 0.322 | 0.813 | [0.736, 0.881] | 0.745 | 0.481 |
-| BASELINE: semantic class only (vegetation indicator from LiDAR labels) | 30477 | 6749 | 0.221 | 0.464 | [0.408, 0.514] | 0.225 | 0.000 |
+| BASELINE: semantic class only (vegetation indicator from LiDAR labels) | 30477 | 6749 | 0.221 | 0.464 | [0.408, 0.514] | 0.210 | 0.000 |
 
 ### Signal-group ablation (AUROC when the group is removed; delta vs full)
 

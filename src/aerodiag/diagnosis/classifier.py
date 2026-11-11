@@ -18,13 +18,28 @@ def prepare(F: pd.DataFrame, cols=None, stats=None):
     return np.c_[Xs.values, miss.values], cols, stats
 
 def fit_logreg(X, y, l2=1.0, iters=300, lr=0.5):
+    """Dispatch: CUDA (models_cuda) when the backend resolves to cuda, else the numpy reference below."""
+    from ..backend import use_cuda
+    if use_cuda():
+        from .models_cuda import fit_logreg as f
+        return f(X, y, l2=l2, iters=iters, lr=lr)
+    return fit_logreg_np(X, y, l2, iters, lr)
+
+def predict(model, X):
+    from ..backend import use_cuda
+    if use_cuda():
+        from .models_cuda import predict_logreg
+        return predict_logreg(model, X)
+    return predict_np(model, X)
+
+def fit_logreg_np(X, y, l2=1.0, iters=300, lr=0.5):
     w = np.zeros(X.shape[1]); b = 0.0; pos = y.mean(); sw = np.where(y == 1, 0.5 / max(pos, 1e-6), 0.5 / max(1 - pos, 1e-6))
     for _ in range(iters):                               # full-batch gradient descent (convex; small problems)
         z = X @ w + b; p = 1 / (1 + np.exp(-np.clip(z, -30, 30))); g = sw * (p - y)
         w -= lr * (X.T @ g / len(y) + l2 * w / len(y)); b -= lr * g.mean()
     return w, b
 
-def predict(model, X):
+def predict_np(model, X):
     w, b = model; return 1 / (1 + np.exp(-np.clip(X @ w + b, -30, 30)))
 
 def auroc(y, s):
@@ -53,9 +68,16 @@ def spatial_cv(F, X, labels: pd.DataFrame, xy, block_m=25.0, folds=5, seed=0, fi
 
 
 def average_precision(y, s):
-    y = np.asarray(y); s = np.asarray(s); o = np.argsort(-s); y = y[o]; tp = np.cumsum(y == 1)
-    prec = tp / np.arange(1, len(y) + 1); n1 = (y == 1).sum()
-    return float((prec * (y == 1)).sum() / n1) if n1 else np.nan
+    """Tie-aware average precision (standard step definition, as in scikit-learn): thresholds at the distinct scores,
+    AP = sum_k (R_k - R_{k-1}) P_k. Cells sharing a score enter at the same threshold, so the result does not depend on
+    how ties are ordered (identical to the per-positive formula when scores are distinct)."""
+    y = np.asarray(y); s = np.asarray(s, float); n1 = (y == 1).sum()
+    if not n1:
+        return np.nan
+    o = np.argsort(-s, kind="stable"); ss = s[o]; yy = (y[o] == 1)
+    last = np.r_[ss[1:] != ss[:-1], True]                                # last index of each tie group
+    tp = np.cumsum(yy)[last]; n = (np.arange(1, len(y) + 1))[last]; dtp = np.diff(np.r_[0, tp])
+    return float((dtp * (tp / n)).sum() / n1)
 
 def recall_at_fpr(y, s, fpr=0.05):
     y = np.asarray(y); s = np.asarray(s); neg = s[y == 0]
@@ -64,7 +86,11 @@ def recall_at_fpr(y, s, fpr=0.05):
     thr = np.quantile(neg, 1 - fpr); return float((s[y == 1] > thr).mean())
 
 def block_bootstrap(y, s, blocks, fn, reps=200, seed=0):
-    """95% CI of fn(y, s) by resampling spatial blocks with replacement."""
+    """95% CI of fn(y, s) by resampling spatial blocks with replacement (CUDA for AUROC / AP when available)."""
+    from ..backend import use_cuda
+    if use_cuda() and fn in (auroc, average_precision):
+        from .models_cuda import block_bootstrap as bb
+        return bb(y, s, blocks, "auroc" if fn is auroc else "ap", reps, seed)
     y = np.asarray(y); s = np.asarray(s); ub, inv = np.unique(blocks, return_inverse=True); rng = np.random.default_rng(seed)
     if len(ub) < 5:
         return (np.nan, np.nan)

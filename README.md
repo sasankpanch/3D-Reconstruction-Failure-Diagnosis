@@ -63,8 +63,12 @@ per-line bias; `src/aerodiag/calib/line_offsets.py` estimates both from images +
 
 ```bash
 python -m venv .venv && .venv/bin/pip install -e .
+# optional, GPU plane sweep (~40x faster per pair; identical signals, CPU path stays the reference):
+.venv/bin/pip install torch --index-url https://download.pytorch.org/whl/cu128
 .venv/bin/python -m pytest -q tests
 ```
+
+`configs/step2.yaml: sweep.backend` is `auto` (CUDA when PyTorch sees a GPU, else CPU).
 
 Data: download the UAVScenes sequences (images, LiDAR, LiDAR labels, `sampleinfos_interpolated.json`,
 `rtk_positions_raw.csv`, DJI Terra model) and `calibration_results.py`, and place them as

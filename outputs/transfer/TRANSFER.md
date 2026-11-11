@@ -21,10 +21,10 @@ Common features: 400
 | gbdt | train | HKairport_GNSS03 | AMtown03 | vehicle | 357783 | 608 | 0.002 | 0.777 | [0.69, 0.83] | 0.009 | 0.894 | 0.038 |
 | gbdt | train | AMtown03 | HKairport_GNSS03 | failure | 10095 | 2206 | 0.219 | 0.900 | [0.86, 0.93] | 0.672 | 0.941 | 0.764 |
 | gbdt | train | AMtown03 | HKairport_GNSS03 | layered | 48239 | 42950 | 0.890 | 0.931 | [0.89, 0.96] | 0.988 | 0.976 | 0.996 |
-| gbdt | train | AMtown03 | HKairport_GNSS03 | vehicle | 105236 | 221 | 0.002 | 0.940 | [0.92, 0.95] | 0.067 | 0.929 | 0.261 |
+| gbdt | train | AMtown03 | HKairport_GNSS03 | vehicle | 105236 | 221 | 0.002 | 0.940 | [0.92, 0.95] | 0.067 | 0.929 | 0.260 |
 | gbdt | own_rank | HKairport_GNSS03 | AMtown03 | failure | 30477 | 6749 | 0.221 | 0.696 | [0.66, 0.74] | 0.356 | 0.920 | 0.796 |
 | gbdt | own_rank | HKairport_GNSS03 | AMtown03 | layered | 147110 | 128919 | 0.876 | 0.822 | [0.80, 0.84] | 0.966 | 0.950 | 0.991 |
 | gbdt | own_rank | HKairport_GNSS03 | AMtown03 | vehicle | 357783 | 608 | 0.002 | 0.766 | [0.70, 0.82] | 0.008 | 0.894 | 0.038 |
 | gbdt | own_rank | AMtown03 | HKairport_GNSS03 | failure | 10095 | 2206 | 0.219 | 0.900 | [0.86, 0.93] | 0.657 | 0.941 | 0.764 |
 | gbdt | own_rank | AMtown03 | HKairport_GNSS03 | layered | 48239 | 42950 | 0.890 | 0.920 | [0.88, 0.95] | 0.986 | 0.976 | 0.996 |
-| gbdt | own_rank | AMtown03 | HKairport_GNSS03 | vehicle | 105236 | 221 | 0.002 | 0.923 | [0.88, 0.95] | 0.059 | 0.929 | 0.261 |
+| gbdt | own_rank | AMtown03 | HKairport_GNSS03 | vehicle | 105236 | 221 | 0.002 | 0.923 | [0.88, 0.95] | 0.059 | 0.929 | 0.260 |

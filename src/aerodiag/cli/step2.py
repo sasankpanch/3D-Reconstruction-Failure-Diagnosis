@@ -25,6 +25,16 @@ from ..signals.sweep import sweep_pair, _project
 from ..signals.sun import sun_vector_enu
 from scipy.spatial.transform import Rotation as Rot
 
+def cuda_available() -> bool:
+    """True if PyTorch with a CUDA device is installed; checked in a subprocess so the parent never initialises CUDA
+    (forked sweep workers create their own CUDA contexts)."""
+    import subprocess, sys
+    try:
+        return subprocess.run([sys.executable, "-c", "import torch, sys; sys.exit(0 if torch.cuda.is_available() else 1)"],
+                              capture_output=True, timeout=120).returncode == 0
+    except Exception:
+        return False
+
 def log(*a):
     print(time.strftime("%H:%M:%S"), *a, flush=True)
 
@@ -58,11 +68,15 @@ def _sweep_worker(pid):
     if len(idx) == 0:
         return pid, None
     img1 = ds.load_image(i, gray=True).astype(np.float32); img2 = ds.load_image(j, gray=True).astype(np.float32)
-    outs = []; ch = cfg["sweep"]["chunk_cells"]
+    gpu = None
+    if _W.get("use_cuda"):
+        from ..signals.sweep_gpu import GpuSweep
+        gpu = GpuSweep(cam, img1, img2)
+    outs = []; ch = cfg["sweep"].get("cuda_chunk_cells", 4000) if gpu is not None else cfg["sweep"]["chunk_cells"]
     for s0 in range(0, len(idx), ch):
         k = idx[s0:s0 + ch]
         o = sweep_pair(img1, img2, cam, T1[:3, :3], T1[:3, 3], T2[:3, :3], T2[:3, 3], cells["xy"][k], cells["z0"][k], cells["n"][k],
-                       (sun[i], sun[j]), cfg["sweep"])
+                       (sun[i], sun[j]), cfg["sweep"], gpu=gpu)
         o["cell_id"] = cells["id"][k]; outs.append(pd.DataFrame(o))
     df = pd.concat(outs, ignore_index=True); df["pair_id"] = np.int32(pid)
     return pid, df
@@ -119,7 +133,8 @@ class Step2:
         from ..config import config_hash
         import hashlib
         pose_sig = hashlib.sha1(np.round(self.T[:, :3, 3], 4).tobytes()).hexdigest()[:12]      # poses enter the cache key
-        key = config_hash(dict(sweep=self.cfg["sweep"], pairs=self.cfg["pairs"], terrain=self.cfg["terrain"], n_pairs=len(self.Tp), poses=pose_sig))
+        sweep_cfg = {k: v for k, v in self.cfg["sweep"].items() if k not in ("workers", "backend", "cuda_workers", "cuda_chunk_cells", "chunk_cells")}
+        key = config_hash(dict(sweep=sweep_cfg, pairs=self.cfg["pairs"], terrain=self.cfg["terrain"], n_pairs=len(self.Tp), poses=pose_sig))
         done = self.out / "cell_pair_signals.parquet"; tag = self.out / "cell_pair_signals.hash"
         if done.exists() and tag.exists() and tag.read_text() == key:
             log("sweep: cached"); return
@@ -128,10 +143,13 @@ class Step2:
         s_w = s_enu @ self.sim.R.T                                          # ENU -> working frame (rotation of the nominal similarity)
         sun = {int(f): v for f, v in zip(fr, s_w)}
         P = self.P.loc[list(self.Tp.keys())]
-        _W.update(ds=self.ds, cam=self.cam, Tp=self.Tp, P=P, cells=self.cells, sun=sun, cfg=self.cfg)
-        log(f"sweeping {len(P)} pairs over {len(self.cells['id'])} candidate cells")
+        use_cuda = cuda_available() if self.cfg["sweep"].get("backend", "auto") == "auto" else self.cfg["sweep"]["backend"] == "cuda"
+        workers = self.cfg["sweep"].get("cuda_workers", 4) if use_cuda else self.cfg["sweep"]["workers"]
+        _W.update(ds=self.ds, cam=self.cam, Tp=self.Tp, P=P, cells=self.cells, sun=sun, cfg=self.cfg, use_cuda=use_cuda)
+        self.res["sweep_backend"] = dict(backend="cuda" if use_cuda else "cpu", workers=workers)
+        log(f"sweeping {len(P)} pairs over {len(self.cells['id'])} candidate cells ({'cuda' if use_cuda else 'cpu'}, {workers} workers)")
         parts = []; t0 = time.time()
-        with Pool(self.cfg["sweep"]["workers"]) as p:
+        with Pool(workers) as p:
             for k, (pid, df) in enumerate(p.imap_unordered(_sweep_worker, P.index.tolist(), chunksize=1)):
                 if df is not None:
                     parts.append(df)
@@ -139,7 +157,7 @@ class Step2:
                     log(f"  {k}/{len(P)} pairs ({time.time() - t0:.0f}s)")
         S = pd.concat(parts, ignore_index=True)
         S = S.join(P[["pair_type", "gap_frames", "dt_s", "heading_diff_deg", "baseline_m", "i", "j"]], on="pair_id")
-        S.to_parquet(done, index=False); tag.write_text(key)
+        S.to_parquet(done, index=False); tag.write_text(key); self.res["sweep_seconds"] = float(time.time() - t0)
         self.res["sweep"] = dict(pairs=int(S.pair_id.nunique()), rows=int(len(S)), valid_rows=int(S.cost_min.notna().sum()), cells=int(S.cell_id.nunique()))
         log("sweep:", self.res["sweep"])
 

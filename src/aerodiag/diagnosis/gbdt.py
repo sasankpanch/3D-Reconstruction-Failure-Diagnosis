@@ -50,7 +50,22 @@ def _apply(t, B, nb):
         stack += [(l, ix[left]), (r, ix[~left])]
     return out
 
-def fit_gbdt(X, y, rounds=150, depth=3, lr=0.1, lam=10.0, min_leaf=50, subsample=0.5, max_rows=60000, n_bins=32, seed=0, loss="logistic"):
+def fit_gbdt(X, y, **kw):
+    """Dispatch: CUDA (models_cuda) when the backend resolves to cuda, else the numpy reference fit_gbdt_np."""
+    from ..backend import use_cuda
+    if use_cuda():
+        from .models_cuda import fit_gbdt as f
+        return f(X, y, **kw)
+    return fit_gbdt_np(X, y, **kw)
+
+def predict_gbdt(model, X):
+    from ..backend import use_cuda
+    if use_cuda():
+        from .models_cuda import predict_gbdt as p
+        return p(model, X)
+    return predict_gbdt_np(model, X)
+
+def fit_gbdt_np(X, y, rounds=150, depth=3, lr=0.1, lam=10.0, min_leaf=50, subsample=0.5, max_rows=60000, n_bins=32, seed=0, loss="logistic"):
     """loss='logistic' (binary y, class-balanced) or 'l2' (regression, squared error)."""
     rng = np.random.default_rng(seed); edges = make_bins(X, n_bins); B = binarize(X, edges, n_bins)
     if loss == "l2":
@@ -67,7 +82,7 @@ def fit_gbdt(X, y, rounds=150, depth=3, lr=0.1, lam=10.0, min_leaf=50, subsample
         t = _tree(B, g, h, idx, depth, lam, min_leaf, n_bins); trees.append(t); f += lr * _apply(t, B, n_bins)
     return dict(edges=edges, trees=trees, lr=lr, n_bins=n_bins, f0=f0, loss=loss)
 
-def predict_gbdt(model, X):
+def predict_gbdt_np(model, X):
     B = binarize(X, model["edges"], model["n_bins"]); f = np.full(len(X), model.get("f0", 0.0))
     for t in model["trees"]:
         f += model["lr"] * _apply(t, B, model["n_bins"])

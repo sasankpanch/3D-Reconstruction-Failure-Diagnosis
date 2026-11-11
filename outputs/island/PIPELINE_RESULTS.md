@@ -78,7 +78,7 @@ Glint: {'sun_azimuth_deg': [242.08442237518392, 242.58110457948789], 'sun_elevat
 | head | n | positives | base_rate | auroc | auroc_ci95 | ap | ap_ci95 | recall_at_5pct_fpr | brier |
 |---|---|---|---|---|---|---|---|---|---|
 | vehicle | 44738 | 0 | 0.000 | — | [—, —] | — | [—, —] | — | 0.010 |
-| water | 57212 | 4149 | 0.073 | 0.947 | [0.923, 0.967] | 0.573 | [0.432, 0.713] | 0.671 | 0.087 |
+| water | 57212 | 4149 | 0.073 | 0.944 | [0.917, 0.963] | 0.530 | [0.359, 0.666] | 0.634 | 0.084 |
 
 ### Head `vehicle`: model vs baselines
 
@@ -91,44 +91,44 @@ Glint: {'sun_azimuth_deg': [242.08442237518392, 242.58110457948789], 'sun_elevat
 | baseline: across (short |across| p50) | 0.499 | [0.462, 0.533] | 0.001 | 0.000 |
 | baseline: flat cost curve (-sharpness, long) | 0.466 | [0.426, 0.507] | 0.001 | 0.013 |
 | baseline: below-terrain fraction | 0.215 | [0.177, 0.262] | 0.001 | 0.000 |
-| baseline: coverage (-n_valid) | 0.911 | [0.870, 0.944] | 0.007 | 0.052 |
+| baseline: coverage (-n_valid) | 0.911 | [0.870, 0.944] | 0.008 | 0.052 |
 | baseline: repetitive (periodic_frac) | 0.354 | [0.334, 0.377] | 0.002 | 0.052 |
 | physics score: featureless | 0.423 | [0.409, 0.436] | 0.001 | 0.000 |
 | physics score: repetitive | 0.354 | [0.335, 0.377] | 0.002 | 0.052 |
 | physics score: moving | 0.368 | [0.343, 0.396] | 0.001 | 0.000 |
 | physics score: reflective | 0.530 | [0.497, 0.560] | 0.001 | 0.000 |
 | physics score: glint_geometric_only | 0.189 | [0.136, 0.239] | 0.001 | 0.000 |
-| physics score: weak_geometry | 0.581 | [0.552, 0.600] | 0.001 | 0.000 |
+| physics score: weak_geometry | 0.581 | [0.552, 0.600] | 0.002 | 0.000 |
 | physics score: hidden_layered_physics | 0.510 | [0.479, 0.550] | 0.001 | 0.000 |
 
 ### Head `water`: model vs baselines
 
 | model | auroc | auroc_ci95 | ap | recall_at_5pct_fpr |
 |---|---|---|---|---|
-| full classifier | 0.947 | [0.923, 0.967] | 0.573 | 0.671 |
-| baseline: low_texture (textureless_frac) | 0.609 | [0.558, 0.659] | 0.135 | 0.189 |
+| full classifier | 0.944 | [0.917, 0.963] | 0.530 | 0.634 |
+| baseline: low_texture (textureless_frac) | 0.609 | [0.558, 0.659] | 0.130 | 0.189 |
 | baseline: photometric (long 1-NCC p50) | 0.672 | [0.601, 0.741] | 0.113 | 0.025 |
 | baseline: across (long |across| p50) | 0.612 | [0.559, 0.661] | 0.095 | 0.044 |
 | baseline: across (short |across| p50) | 0.844 | [0.773, 0.903] | 0.318 | 0.380 |
 | baseline: flat cost curve (-sharpness, long) | 0.461 | [0.396, 0.525] | 0.064 | 0.002 |
 | baseline: below-terrain fraction | 0.552 | [0.489, 0.622] | 0.073 | 0.001 |
 | baseline: coverage (-n_valid) | 0.293 | [0.225, 0.364] | 0.047 | 0.003 |
-| baseline: repetitive (periodic_frac) | 0.754 | [0.707, 0.800] | 0.169 | 0.166 |
-| physics score: featureless | 0.609 | [0.557, 0.659] | 0.124 | 0.186 |
-| physics score: repetitive | 0.754 | [0.707, 0.800] | 0.169 | 0.166 |
-| physics score: moving | 0.315 | [0.281, 0.349] | 0.049 | 0.000 |
-| physics score: reflective | 0.578 | [0.542, 0.620] | 0.084 | 0.000 |
+| baseline: repetitive (periodic_frac) | 0.754 | [0.707, 0.800] | 0.166 | 0.166 |
+| physics score: featureless | 0.609 | [0.557, 0.659] | 0.118 | 0.186 |
+| physics score: repetitive | 0.754 | [0.707, 0.800] | 0.166 | 0.166 |
+| physics score: moving | 0.315 | [0.281, 0.349] | 0.053 | 0.000 |
+| physics score: reflective | 0.578 | [0.542, 0.620] | 0.080 | 0.000 |
 | physics score: glint_geometric_only | 0.450 | [0.377, 0.531] | 0.060 | 0.016 |
-| physics score: weak_geometry | 0.450 | [0.424, 0.468] | 0.055 | 0.001 |
-| physics score: hidden_layered_physics | 0.522 | [0.478, 0.582] | 0.066 | 0.000 |
+| physics score: weak_geometry | 0.450 | [0.424, 0.468] | 0.072 | 0.001 |
+| physics score: hidden_layered_physics | 0.522 | [0.478, 0.582] | 0.074 | 0.000 |
 
 ### Signal-group ablation (AUROC when the group is removed; delta vs full)
 
 | ablation | failure_auroc | failure_delta | layered_auroc | layered_delta | water_auroc | water_delta |
 |---|---|---|---|---|---|---|
-| without_across | — | — | — | — | 0.934 | -0.013 |
-| without_curve | — | — | — | — | 0.947 | 0.000 |
-| without_photometric | — | — | — | — | 0.948 | 0.001 |
-| without_height | — | — | — | — | 0.933 | -0.014 |
-| without_glint | — | — | — | — | 0.936 | -0.011 |
-| without_coverage/texture | — | — | — | — | 0.939 | -0.008 |
+| without_across | — | — | — | — | 0.939 | -0.005 |
+| without_curve | — | — | — | — | 0.947 | 0.003 |
+| without_photometric | — | — | — | — | 0.948 | 0.004 |
+| without_height | — | — | — | — | 0.945 | 0.001 |
+| without_glint | — | — | — | — | 0.944 | 0.000 |
+| without_coverage/texture | — | — | — | — | 0.938 | -0.006 |

@@ -102,51 +102,51 @@ Glint: {'sun_azimuth_deg': [240.51500692212414, 241.08078101668764], 'sun_elevat
 
 | head | n | positives | base_rate | auroc | auroc_ci95 | ap | ap_ci95 | recall_at_5pct_fpr | brier |
 |---|---|---|---|---|---|---|---|---|---|
-| failure | 10095 | 2206 | 0.219 | 0.934 | [0.900, 0.959] | 0.755 | [0.704, 0.803] | 0.607 | 0.095 |
+| failure | 10095 | 2206 | 0.219 | 0.934 | [0.900, 0.959] | 0.755 | [0.705, 0.803] | 0.607 | 0.095 |
 | layered | 48239 | 42950 | 0.890 | 0.968 | [0.950, 0.979] | 0.995 | [0.993, 0.997] | 0.849 | 0.058 |
-| vehicle | 105236 | 221 | 0.002 | 0.914 | [0.826, 0.989] | 0.051 | [0.010, 0.155] | 0.647 | 0.026 |
+| vehicle | 105236 | 221 | 0.002 | 0.914 | [0.826, 0.989] | 0.051 | [0.010, 0.159] | 0.647 | 0.026 |
 
 ### Head `failure`: model vs baselines
 
 | model | auroc | auroc_ci95 | ap | recall_at_5pct_fpr |
 |---|---|---|---|---|
 | full classifier | 0.934 | [0.900, 0.959] | 0.755 | 0.607 |
-| baseline: low_texture (textureless_frac) | 0.519 | [0.486, 0.551] | 0.212 | 0.030 |
+| baseline: low_texture (textureless_frac) | 0.519 | [0.486, 0.551] | 0.228 | 0.030 |
 | baseline: photometric (long 1-NCC p50) | 0.863 | [0.834, 0.891] | 0.583 | 0.366 |
 | baseline: across (long |across| p50) | 0.787 | [0.739, 0.840] | 0.435 | 0.164 |
 | baseline: across (short |across| p50) | 0.626 | [0.572, 0.690] | 0.279 | 0.061 |
 | baseline: flat cost curve (-sharpness, long) | 0.633 | [0.558, 0.703] | 0.291 | 0.086 |
-| baseline: below-terrain fraction | 0.767 | [0.720, 0.816] | 0.508 | 0.300 |
+| baseline: below-terrain fraction | 0.767 | [0.720, 0.816] | 0.507 | 0.300 |
 | baseline: coverage (-n_valid) | 0.553 | [0.445, 0.655] | 0.260 | 0.070 |
 | baseline: repetitive (periodic_frac) | 0.623 | [0.576, 0.664] | 0.292 | 0.074 |
-| physics score: featureless | 0.519 | [0.488, 0.551] | 0.213 | 0.037 |
+| physics score: featureless | 0.519 | [0.488, 0.551] | 0.229 | 0.037 |
 | physics score: repetitive | 0.623 | [0.576, 0.664] | 0.292 | 0.074 |
-| physics score: moving | 0.360 | [0.299, 0.428] | 0.155 | 0.000 |
-| physics score: reflective | 0.522 | [0.491, 0.553] | 0.180 | 0.000 |
+| physics score: moving | 0.360 | [0.299, 0.428] | 0.166 | 0.000 |
+| physics score: reflective | 0.522 | [0.491, 0.553] | 0.227 | 0.000 |
 | physics score: glint_geometric_only | 0.568 | [0.490, 0.635] | 0.311 | 0.150 |
-| physics score: weak_geometry | 0.500 | [0.500, 0.501] | 0.594 | 0.000 |
-| physics score: hidden_layered_physics | 0.807 | [0.764, 0.845] | 0.361 | 0.000 |
+| physics score: weak_geometry | 0.500 | [0.500, 0.501] | 0.219 | 0.000 |
+| physics score: hidden_layered_physics | 0.807 | [0.764, 0.845] | 0.447 | 0.000 |
 
 ### Head `layered`: model vs baselines
 
 | model | auroc | auroc_ci95 | ap | recall_at_5pct_fpr |
 |---|---|---|---|---|
 | full classifier | 0.968 | [0.950, 0.979] | 0.995 | 0.849 |
-| baseline: low_texture (textureless_frac) | 0.454 | [0.412, 0.488] | 0.870 | 0.003 |
+| baseline: low_texture (textureless_frac) | 0.454 | [0.412, 0.488] | 0.866 | 0.003 |
 | baseline: photometric (long 1-NCC p50) | 0.883 | [0.853, 0.902] | 0.979 | 0.481 |
 | baseline: across (long |across| p50) | 0.791 | [0.727, 0.851] | 0.954 | 0.134 |
 | baseline: across (short |across| p50) | 0.626 | [0.584, 0.670] | 0.922 | 0.090 |
 | baseline: flat cost curve (-sharpness, long) | 0.669 | [0.599, 0.736] | 0.924 | 0.052 |
 | baseline: below-terrain fraction | 0.783 | [0.701, 0.828] | 0.957 | 0.194 |
-| baseline: coverage (-n_valid) | 0.417 | [0.334, 0.510] | 0.870 | 0.022 |
-| baseline: repetitive (periodic_frac) | 0.592 | [0.543, 0.642] | 0.907 | 0.041 |
-| physics score: featureless | 0.454 | [0.412, 0.489] | 0.873 | 0.010 |
-| physics score: repetitive | 0.592 | [0.543, 0.642] | 0.907 | 0.041 |
-| physics score: moving | 0.475 | [0.428, 0.519] | 0.880 | 0.000 |
-| physics score: reflective | 0.611 | [0.562, 0.656] | 0.890 | 0.000 |
+| baseline: coverage (-n_valid) | 0.417 | [0.334, 0.510] | 0.871 | 0.022 |
+| baseline: repetitive (periodic_frac) | 0.592 | [0.543, 0.642] | 0.906 | 0.041 |
+| physics score: featureless | 0.454 | [0.412, 0.489] | 0.868 | 0.010 |
+| physics score: repetitive | 0.592 | [0.543, 0.642] | 0.906 | 0.041 |
+| physics score: moving | 0.475 | [0.428, 0.519] | 0.881 | 0.000 |
+| physics score: reflective | 0.611 | [0.562, 0.656] | 0.916 | 0.000 |
 | physics score: glint_geometric_only | 0.589 | [0.515, 0.659] | 0.932 | 0.240 |
-| physics score: weak_geometry | 0.500 | [0.497, 0.502] | 0.951 | 0.003 |
-| physics score: hidden_layered_physics | 0.823 | [0.777, 0.852] | 0.948 | 0.000 |
+| physics score: weak_geometry | 0.500 | [0.497, 0.502] | 0.891 | 0.003 |
+| physics score: hidden_layered_physics | 0.823 | [0.777, 0.852] | 0.961 | 0.000 |
 
 ### Head `vehicle`: model vs baselines
 
@@ -164,10 +164,10 @@ Glint: {'sun_azimuth_deg': [240.51500692212414, 241.08078101668764], 'sun_elevat
 | physics score: featureless | 0.553 | [0.468, 0.663] | 0.003 | 0.154 |
 | physics score: repetitive | 0.488 | [0.352, 0.744] | 0.003 | 0.072 |
 | physics score: moving | 0.627 | [0.495, 0.719] | 0.003 | 0.000 |
-| physics score: reflective | 0.558 | [0.466, 0.626] | 0.011 | 0.000 |
+| physics score: reflective | 0.558 | [0.466, 0.626] | 0.002 | 0.000 |
 | physics score: glint_geometric_only | 0.674 | [0.463, 0.892] | 0.004 | 0.109 |
 | physics score: weak_geometry | 0.495 | [0.492, 0.499] | 0.002 | 0.000 |
-| physics score: hidden_layered_physics | 0.427 | [0.365, 0.497] | 0.013 | 0.000 |
+| physics score: hidden_layered_physics | 0.427 | [0.365, 0.497] | 0.002 | 0.000 |
 
 ### Failure head within class strata (confound check)
 
@@ -177,7 +177,7 @@ Glint: {'sun_azimuth_deg': [240.51500692212414, 241.08078101668764], 'sun_elevat
 | non-vegetation | 5138 | 562 | 0.109 | 0.892 | [0.779, 0.959] | 0.640 | 0.623 |
 | hard surfaces | 1899 | 8 | 0.004 | 0.960 | [0.900, 0.982] | 0.079 | 0.625 |
 | background | 2410 | 480 | 0.199 | 0.910 | [0.863, 0.947] | 0.740 | 0.652 |
-| BASELINE: semantic class only (vegetation indicator from LiDAR labels) | 10095 | 2206 | 0.219 | 0.663 | [0.568, 0.747] | 0.524 | 0.000 |
+| BASELINE: semantic class only (vegetation indicator from LiDAR labels) | 10095 | 2206 | 0.219 | 0.663 | [0.568, 0.747] | 0.303 | 0.000 |
 
 ### Signal-group ablation (AUROC when the group is removed; delta vs full)
 
