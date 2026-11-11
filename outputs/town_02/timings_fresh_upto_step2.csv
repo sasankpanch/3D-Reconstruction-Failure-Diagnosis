@@ -1,0 +1,5 @@
+stage,seconds,backend,gpu,cpu,fresh
+phase0,1.238311581,auto,NVIDIA GeForce RTX 5080,AMD Ryzen 9 9900X 12-Core Processor,--fresh
+track_a,193.621982477,auto,NVIDIA GeForce RTX 5080,AMD Ryzen 9 9900X 12-Core Processor,--fresh
+track_b,612.112430744,auto,NVIDIA GeForce RTX 5080,AMD Ryzen 9 9900X 12-Core Processor,--fresh
+step2,471.023837162,auto,NVIDIA GeForce RTX 5080,AMD Ryzen 9 9900X 12-Core Processor,--fresh

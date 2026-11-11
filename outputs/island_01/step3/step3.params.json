@@ -1,0 +1,149 @@
+{
+  "params": {
+    "data": {
+      "root": "/home/edgar/Desktop/CC",
+      "scene": "HKisland_GNSS01",
+      "paths": {
+        "calibration": "calibration_results.py",
+        "cam_dir": "data/island_01/interval1_HKisland_GNSS01/interval1_CAM",
+        "lidar_dir": "data/island_01/interval1_HKisland_GNSS01/interval1_LIDAR",
+        "label_id_dir": "data/island_01/interval1_HKisland_GNSS01_Labels/interval1_LIDAR_label_id",
+        "sampleinfos": "data/island_01/interval1_HKisland_GNSS01/sampleinfos_interpolated.json",
+        "rtk_csv": "data/island_01/interval1_HKisland_GNSS01/rtk_positions_raw.csv",
+        "terra_dir": "data/terra/HKisland_GNSS",
+        "outputs": "outputs/island_01"
+      },
+      "camera": {
+        "model": "calibration"
+      },
+      "reference_poses": {
+        "frame_period_ns": 100000000,
+        "keyframe_modulo": 5,
+        "anchor_tol_m": 0.001,
+        "anchor_tol_deg": 0.001,
+        "exclude_off_grid_anchors": true
+      },
+      "segmentation": {
+        "hover_speed": 1.5,
+        "vertical_speed": 1.0,
+        "heading_window_s": 3.0,
+        "heading_stable_deg": 8.0,
+        "line_min_duration_s": 6.0,
+        "line_min_speed": 2.0,
+        "parallel_tol_deg": 15.0,
+        "smooth_frames": 11
+      },
+      "rtk": {
+        "fit_segments_exclude": [
+          "hover",
+          "climb",
+          "descent"
+        ],
+        "altitude_datum": "assumed WGS84 ellipsoidal (DJI default), UNVERIFIED (Q8)"
+      },
+      "classes": {
+        "dynamic": [
+          20,
+          24
+        ],
+        "water": [
+          4,
+          5
+        ],
+        "vehicle": [
+          20,
+          24
+        ],
+        "healthy_class_based": [
+          3,
+          2,
+          18,
+          19,
+          1
+        ],
+        "paved": [
+          3,
+          2,
+          18,
+          19
+        ],
+        "vegetation": [
+          13,
+          14
+        ],
+        "report_separately": [
+          0,
+          13
+        ]
+      },
+      "heads_exclude": [
+        "failure",
+        "layered"
+      ]
+    },
+    "step3": {
+      "seed": 0,
+      "min_pairs": 3,
+      "motion": {
+        "min_obs": 6,
+        "pool_radii": [
+          1,
+          2
+        ]
+      },
+      "physics": {
+        "low_texture_std": 4.0,
+        "periodic_frac_full": 0.3,
+        "t_full": 4.0,
+        "good_baseline_m": 30.0,
+        "good_n_pairs": 10,
+        "layer_cost_jump": 0.2,
+        "glint_gain_full": 0.2
+      },
+      "labels": {
+        "failure_min_abs_error": 0.5,
+        "healthy_max_abs_error": 0.15,
+        "layered_min_spread": 2.0,
+        "flat_max_spread": 0.3,
+        "vehicle_min_points": 20
+      },
+      "cv": {
+        "block_m": 25.0,
+        "folds": 5,
+        "l2": 10.0
+      },
+      "gbdt": {
+        "rounds": 150,
+        "depth": 3,
+        "lr": 0.1,
+        "lam": 10.0,
+        "min_leaf": 50,
+        "subsample": 0.5,
+        "max_rows": 60000
+      },
+      "context": {
+        "windows": [
+          3,
+          7
+        ]
+      },
+      "magnitude": {
+        "alpha": 0.9
+      }
+    }
+  },
+  "created": "2026-11-11T14:47:07",
+  "python": "3.12.3",
+  "platform": "Linux-7.0.0-42-generic-x86_64-with-glibc2.39",
+  "argv": [
+    "/home/edgar/Desktop/CC/src/aerodiag/cli/step3.py",
+    "--data",
+    "configs/data_island_01.yaml"
+  ],
+  "versions": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "opencv": "5.0.0",
+    "open3d": "0.20.0"
+  }
+}

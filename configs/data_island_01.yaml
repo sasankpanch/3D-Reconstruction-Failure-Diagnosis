@@ -26,7 +26,7 @@ segmentation:
   heading_window_s: 3.0
   heading_stable_deg: 8.0
   line_min_duration_s: 6.0
-  line_min_speed: 5.0
+  line_min_speed: 2.0          # this flight cruises at 3-4 m/s (02/03 flights: 6 m/s)
   parallel_tol_deg: 15.0
   smooth_frames: 11
 rtk:

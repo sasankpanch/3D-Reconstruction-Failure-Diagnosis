@@ -3,3 +3,7 @@ phase0,1.238311581,auto,NVIDIA GeForce RTX 5080,AMD Ryzen 9 9900X 12-Core Proces
 track_a,193.621982477,auto,NVIDIA GeForce RTX 5080,AMD Ryzen 9 9900X 12-Core Processor,--fresh
 track_b,612.112430744,auto,NVIDIA GeForce RTX 5080,AMD Ryzen 9 9900X 12-Core Processor,--fresh
 step2,471.023837162,auto,NVIDIA GeForce RTX 5080,AMD Ryzen 9 9900X 12-Core Processor,--fresh
+step3,129.848332375,auto,NVIDIA GeForce RTX 5080,AMD Ryzen 9 9900X 12-Core Processor,no
+calibrate_logreg,1.317711768,auto,NVIDIA GeForce RTX 5080,AMD Ryzen 9 9900X 12-Core Processor,no
+calibrate_gbdt,1.196240876,auto,NVIDIA GeForce RTX 5080,AMD Ryzen 9 9900X 12-Core Processor,no
+summary,.196443659,auto,NVIDIA GeForce RTX 5080,AMD Ryzen 9 9900X 12-Core Processor,no
